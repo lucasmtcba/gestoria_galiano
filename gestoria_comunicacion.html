@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Comunicación - Gestoría</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background-color: #1a1a1a;
+            color: #d4af37;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #2a2a2a;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .conversation-list {
+            list-style: none;
+            padding: 0;
+        }
+        .conversation-item {
+            padding: 12px;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .conversation-item:hover {
+            background-color: #3a3a3a;
+        }
+        .conversation-item.active {
+            background-color: #d4af37;
+            color: #1a1a1a;
+        }
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: white;
+        }
+        .message {
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            max-width: 70%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .message.client {
+            background: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .message.gestoria {
+            background: #e8f5e9;
+            margin-right: auto;
+        }
+        .input-area {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+            display: flex;
+        }
+        textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            height: 50px;
+        }
+        button {
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        .client-info {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .task-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .task-actions button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Gestión de Comunicación - Gestoría Galiano
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Conversaciones</h3>
+            <ul class="conversation-list">
+                <li class="conversation-item active" onclick="location.href='#'">
+                    <strong>Lucas Torres</strong><br>
+                    <small>Consulta Fiscal - 25/03/2026</small>
+                </li>
+                <li class="conversation-item" onclick="location.href='#'">
+                    <strong>Empresa XYZ</strong><br>
+                    <small>Envío de Facturas - 24/03/2026</small>
+                </li>
+            </ul>
+        </div>
+        <div class="chat-area">
+            <button class="back-btn" onclick="window.location.href='gestoria_dashboard.html'">Volver al Dashboard</button>
+            <div class="client-info">
+                <strong>Cliente:</strong> Lucas Torres<br>
+                <strong>Categoría:</strong> Fiscal<br>
+                <strong>Fecha:</strong> 25/03/2026
+            </div>
+            <div class="message client">
+                <p>Hola, necesito ayuda con una factura que recibí de un proveedor. ¿Podrían revisarla?</p>
+            </div>
+            <div class="message gestoria">
+                <p>Hola Lucas, por supuesto. Por favor, adjunta la factura para que podamos revisarla.</p>
+            </div>
+            <div class="message client">
+                <p>Adjunto la factura en cuestión.</p>
+                <small>factura_123.pdf</small>
+            </div>
+            <div class="task-actions">
+                <button onclick="alert('Tarea asignada')">Asignar Tarea</button>
+                <button onclick="alert('Documento recibido')">Marcar como Recibido</button>
+                <button onclick="alert('Respuesta enviada')">Responder</button>
+            </div>
+        </div>
+    </div>
+    <div class="input-area">
+        <textarea placeholder="Escribe tu respuesta..."></textarea>
+        <button>Enviar</button>
+    </div>
+</body>
+</html>
