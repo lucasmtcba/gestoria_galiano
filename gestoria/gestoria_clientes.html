@@ -1,0 +1,3696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 0.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-item .menu-text {
+            display: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .menu-icon {
+            font-size: 1.1rem;
+        }
+
+        .menu-text {
+            font-size: 0.9rem;
+        }
+
+        .notification-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Clients Management Container */
+        .clients-management {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Clients Sidebar */
+        .clients-sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            padding: 0 1.25rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quick-action-btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .quick-action-btn.primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .quick-action-btn.secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .search-box {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filters-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+
+        .client-stats {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .client-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .client-item {
+            padding: 0.8rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .client-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .client-item.active {
+            background-color: #e8f4f8;
+        }
+
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .client-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        .client-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .client-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        /* Client Detail */
+        .client-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        /* Client Header */
+        .client-header-bar {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .client-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .client-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .client-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .client-action-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Client Detail Content */
+        .client-detail-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .client-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-group {
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .client-description {
+            margin-bottom: 2rem;
+        }
+
+        .client-description h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .description-content {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            line-height: 1.5;
+        }
+
+        /* Client Documents */
+        .client-documents {
+            margin-bottom: 2rem;
+        }
+
+        .documents-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .documents-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+        }
+
+        .document-icon {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-name {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .document-meta {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .document-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.2rem;
+        }
+
+        /* Client Conversations */
+        .client-conversations {
+            margin-bottom: 2rem;
+        }
+
+        .conversation-item {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .conversation-title {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .conversation-time {
+            color: #999;
+        }
+
+        .conversation-content {
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .conversation-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .conversation-action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .conversation-action-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .conversation-action-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Client Tasks */
+        .client-tasks {
+            margin-bottom: 2rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            flex-shrink: 0;
+        }
+
+        .task-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .task-meta {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Client Footer Actions */
+        .client-footer {
+            padding: 1.25rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            background-color: white;
+        }
+
+        .footer-action-btn {
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .footer-action-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .footer-action-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* User Selector */
+        .user-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-tag {
+            background-color: #f0f0f0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Client Properties Modal */
+        .client-properties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .property-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .property-group h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .property-label {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .property-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .clients-management {
+                flex-direction: column;
+            }
+
+            .clients-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .client-info {
+                grid-template-columns: 1fr;
+            }
+
+            .client-properties {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .client-detail-content {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">Gestoría Galiano</div>
+        </div>
+        <div class="user-profile" onclick="toggleUserDropdown()">
+            <div class="user-avatar">AG</div>
+            <div>
+                <div style="font-size: 0.9rem;">Ana García</div>
+                <div style="font-size: 0.8rem; color: #ccc;">Asesora Fiscal</div>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Gestoría Galiano</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='gestoria_dashboard.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="menu-text">Dashboard</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_comunicacion.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="menu-text">Comunicación</div>
+                    <div class="notification-badge">3</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_tareas.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="menu-text">Tareas</div>
+                    <div class="notification-badge">8</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_documentos.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div class="menu-text">Documentos</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_correo.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="menu-text">Correo</div>
+                    <div class="notification-badge">12</div>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='gestoria_clientes.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="menu-text">Clientes</div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Clients Management -->
+            <div class="clients-management">
+                <!-- Clients Sidebar -->
+                <aside class="clients-sidebar">
+                    <div class="sidebar-header">
+                        <h3 class="sidebar-title">Gestión de Clientes</h3>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action-btn primary" onclick="openNewClientModal()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Nuevo Cliente</span>
+                        </button>
+                        <button class="quick-action-btn secondary" onclick="openImportModal()">
+                            <i class="fas fa-file-import"></i>
+                            <span>Importar Clientes</span>
+                        </button>
+                        <button class="quick-action-btn secondary">
+                            <i class="fas fa-filter"></i>
+                            <span>Filtros Avanzados</span>
+                        </button>
+                    </div>
+
+                    <div class="search-box">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Buscar clientes..." oninput="filterClients()">
+                        </div>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo de cliente</label>
+                            <select class="filter-select" onchange="filterClients()">
+                                <option value="">Todos</option>
+                                <option value="autonomo">Autónomo</option>
+                                <option value="pyme">PYME</option>
+                                <option value="empresa">Gran Empresa</option>
+                                <option value="particular">Particular</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Estado</label>
+                            <select class="filter-select" onchange="filterClients()">
+                                <option value="">Todos</option>
+                                <option value="active">Activos</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="inactive">Inactivos</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Asesor</label>
+                            <select class="filter-select" onchange="filterClients()">
+                                <option value="">Todos</option>
+                                <option value="ana">Ana García</option>
+                                <option value="carlos">Carlos Martínez</option>
+                                <option value="javier">Javier Rodríguez</option>
+                                <option value="laura">Laura Gómez</option>
+                            </select>
+                        </div>
+
+                        <button class="quick-action-btn secondary" style="width: 100%; margin-top: 0.75rem;" onclick="applyFilters()">
+                            <i class="fas fa-search"></i>
+                            <span>Aplicar Filtros</span>
+                        </button>
+                    </div>
+
+                    <div class="client-stats">
+                        <h4 style="margin-bottom: 0.75rem; font-size: 1rem; color: var(--primary-color);">Estadísticas</h4>
+                        <div class="stat-item">
+                            <span class="stat-label">Clientes totales</span>
+                            <span class="stat-value">87</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Activos</span>
+                            <span class="stat-value">62</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Pendientes</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Inactivos</span>
+                            <span class="stat-value">13</span>
+                        </div>
+                    </div>
+
+                    <div class="client-list">
+                        <div class="client-item active" onclick="loadClient('lucas-torres')">
+                            <div class="client-header">
+                                <div class="client-name">Lucas Torres</div>
+                                <div class="client-status status-active">Activo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>12345678A</span>
+                                <span>Autónomo</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Ana García • <i class="fas fa-calendar"></i> Alta: 15/01/2020
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('empresa-xyz')">
+                            <div class="client-header">
+                                <div class="client-name">Empresa XYZ, S.L.</div>
+                                <div class="client-status status-active">Activo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>B12345678</span>
+                                <span>PYME</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Carlos Martínez • <i class="fas fa-calendar"></i> Alta: 03/05/2019
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('autonomo-abc')">
+                            <div class="client-header">
+                                <div class="client-name">Autónomo ABC</div>
+                                <div class="client-status status-pending">Pendiente</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>87654321Z</span>
+                                <span>Autónomo</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Javier Rodríguez • <i class="fas fa-calendar"></i> Alta: 12/11/2021
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('industrias-123')">
+                            <div class="client-header">
+                                <div class="client-name">Industrias 123, S.A.</div>
+                                <div class="client-status status-active">Activo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>A12345678</span>
+                                <span>Gran Empresa</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Pablo Ruiz • <i class="fas fa-calendar"></i> Alta: 22/06/2018
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('marta-sanchez')">
+                            <div class="client-header">
+                                <div class="client-name">Marta Sánchez Pérez</div>
+                                <div class="client-status status-inactive">Inactivo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>76543210W</span>
+                                <span>Particular</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Laura Gómez • <i class="fas fa-calendar"></i> Alta: 08/09/2022
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('construcciones-sl')">
+                            <div class="client-header">
+                                <div class="client-name">Construcciones SL</div>
+                                <div class="client-status status-active">Activo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>B87654321</span>
+                                <span>PYME</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Carlos Martínez • <i class="fas fa-calendar"></i> Alta: 17/03/2020
+                            </div>
+                        </div>
+
+                        <div class="client-item" onclick="loadClient('comercio-rapido')">
+                            <div class="client-header">
+                                <div class="client-name">Comercio Rápido</div>
+                                <div class="client-status status-active">Activo</div>
+                            </div>
+                            <div class="client-meta">
+                                <span>12345678B</span>
+                                <span>Autónomo</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Ana García • <i class="fas fa-calendar"></i> Alta: 05/12/2021
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Client Detail -->
+                <div class="client-detail">
+                    <div class="client-header-bar">
+                        <h3 class="client-title">Lucas Torres</h3>
+                        <div class="client-actions">
+                            <button class="client-action-btn" title="Editar cliente" onclick="openEditClientModal()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="client-action-btn" title="Enviar mensaje" onclick="openMessageModal()">
+                                <i class="fas fa-comment-alt"></i>
+                            </button>
+                            <button class="client-action-btn" title="Crear tarea" onclick="openTaskModal()">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                            <button class="client-action-btn" title="Subir documento" onclick="openUploadModal()">
+                                <i class="fas fa-file-upload"></i>
+                            </button>
+                            <button class="client-action-btn" title="Historial" onclick="openHistoryModal()">
+                                <i class="fas fa-history"></i>
+                            </button>
+                            <button class="client-action-btn" title="Más opciones">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="client-detail-content">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <div class="user-avatar" style="width: 4rem; height: 4rem; font-size: 1.5rem;">LT</div>
+                                <div>
+                                    <h2 style="margin: 0; font-size: 1.5rem; color: var(--primary-color);">Lucas Torres</h2>
+                                    <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                                        <span style="color: #666; font-size: 0.9rem;">12345678A</span>
+                                        <span class="client-status status-active">Activo</span>
+                                        <span style="color: #666; font-size: 0.9rem;">Autónomo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.3rem;">Fecha de alta</div>
+                                <div style="font-weight: 500; color: var(--primary-color);">15/01/2020</div>
+                                <div style="font-size: 0.9rem; color: #666; margin-top: 0.7rem; margin-bottom: 0.3rem;">Asesor asignado</div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-end;">
+                                    <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                    <span style="font-weight: 500; color: var(--primary-color);">Ana García</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="client-info">
+                            <div class="info-group">
+                                <div class="info-label">Información de contacto</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <i class="fas fa-phone" style="margin-right: 0.5rem; color: #666;"></i>
+                                        654 321 098
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <i class="fas fa-envelope" style="margin-right: 0.5rem; color: #666;"></i>
+                                        lucas.torres@email.com
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: #666;"></i>
+                                        Calle Mayor, 45, 28013 Madrid
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Datos fiscales</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>NIF:</strong> 12345678A
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Régimen:</strong> Estimación directa
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Actividad:</strong> 841.1 - Servicios de contabilidad
+                                    </div>
+                                    <div>
+                                        <strong>Epígrafe IAE:</strong> 841.1
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Información laboral</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Situación:</strong> Autónomo en activo
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Fecha alta:</strong> 01/01/2018
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Base cotización:</strong> 1.230,00 €
+                                    </div>
+                                    <div>
+                                        <strong>Mutua:</strong> Asepeyo
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Datos bancarios</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Entidad:</strong> BBVA
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>IBAN:</strong> ESXX 2080 1234 5678 9012 3456
+                                    </div>
+                                    <div>
+                                        <strong>Titular:</strong> Lucas Torres
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="client-description">
+                            <h4>Notas adicionales</h4>
+                            <div class="description-content">
+                                <p>Cliente desde 2020. Autónomo dedicado a servicios de contabilidad para pequeñas empresas. Tiene contratos con varias empresas de la zona y factura mensualmente.</p>
+                                <p>Preferencias:</p>
+                                <ul>
+                                    <li>Comunicación principalmente por email</li>
+                                    <li>Prefiere reuniones los martes o jueves por la mañana</li>
+                                    <li>Necesita recordatorios para plazos fiscales</li>
+                                </ul>
+                                <p>Historial: Siempre cumple con los plazos, pero a veces necesita ayuda con la interpretación de normativas complejas.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">12</div>
+                                <div style="font-size: 0.8rem; color: #666;">Documentos</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">8</div>
+                                <div style="font-size: 0.8rem; color: #666;">Tareas pendientes</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">24</div>
+                                <div style="font-size: 0.8rem; color: #666;">Mensajes</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">3</div>
+                                <div style="font-size: 0.8rem; color: #666;">Notificaciones</div>
+                            </div>
+                        </div>
+
+                        <div class="client-documents">
+                            <div class="documents-header">
+                                <h4 class="documents-title">Documentos recientes</h4>
+                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer; font-size: 0.8rem;" onclick="openUploadModal()">
+                                    <i class="fas fa-plus" style="margin-right: 0.3rem;"></i> Subir documento
+                                </button>
+                            </div>
+
+                            <div class="document-list">
+                                <div class="document-item">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-name">recibo_autonomos_marzo.pdf</div>
+                                        <div class="document-meta">1.2MB • Subido: 25/03/2026 10:40 • <span style="color: var(--secondary-color);">Fiscal</span></div>
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('recibo_autonomos_marzo.pdf')">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('recibo_autonomos_marzo.pdf')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Compartir" onclick="shareDocument('recibo_autonomos_marzo.pdf')">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="document-item">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-name">justificante_pago_marzo.pdf</div>
+                                        <div class="document-meta">800KB • Subido: 25/03/2026 10:40 • <span style="color: var(--secondary-color);">Fiscal</span></div>
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('justificante_pago_marzo.pdf')">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('justificante_pago_marzo.pdf')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Compartir" onclick="shareDocument('justificante_pago_marzo.pdf')">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="document-item">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-excel"></i>
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-name">facturas_q1_2026.xlsx</div>
+                                        <div class="document-meta">450KB • Subido: 10/03/2026 15:30 • <span style="color: var(--accent-color);">Contable</span></div>
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('facturas_q1_2026.xlsx')">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('facturas_q1_2026.xlsx')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Compartir" onclick="shareDocument('facturas_q1_2026.xlsx')">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="document-item">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-word"></i>
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-name">contrato_servicios.docx</div>
+                                        <div class="document-meta">320KB • Subido: 05/02/2026 09:15 • <span style="color: #9b59b6;">Legal</span></div>
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('contrato_servicios.docx')">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('contrato_servicios.docx')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="document-action-btn" title="Compartir" onclick="shareDocument('contrato_servicios.docx')">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="client-conversations">
+                            <div class="documents-header">
+                                <h4 class="documents-title">Conversaciones recientes</h4>
+                                <button style="background-color: var(--secondary-color); color: var(--dark-color); border: none; padding: 0.4rem 0.8rem; border-radius: var(--border-radius); font-size: 0.8rem; cursor: pointer;" onclick="openMessageModal()">
+                                    <i class="fas fa-plus" style="margin-right: 0.3rem;"></i> Nueva conversación
+                                </button>
+                            </div>
+
+                            <div class="conversation-item">
+                                <div class="conversation-header">
+                                    <div class="conversation-title">Revisión documentación fiscal Q1</div>
+                                    <div class="conversation-time">Hace 2 horas</div>
+                                </div>
+                                <div class="conversation-content">
+                                    <strong>Lucas Torres:</strong> Buenos días, necesito ayuda con la declaración trimestral. ¿Podrían revisar los documentos que adjunto?
+                                </div>
+                                <div class="conversation-actions">
+                                    <button class="conversation-action-btn conversation-action-primary" onclick="window.location.href='gestoria_comunicacion.html#FIS-2026-0345'">
+                                        <i class="fas fa-reply"></i> Responder
+                                    </button>
+                                    <button class="conversation-action-btn conversation-action-secondary">
+                                        <i class="fas fa-tasks"></i> Crear tarea
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="conversation-item">
+                                <div class="conversation-header">
+                                    <div class="conversation-title">Consulta sobre deducciones</div>
+                                    <div class="conversation-time">Ayer a las 16:45</div>
+                                </div>
+                                <div class="conversation-content">
+                                    <strong>Ana García:</strong> Lucas, he revisado tus deducciones y todo parece correcto. Solo necesito que me confirmes el justificante de la inversión en equipo informático.
+                                </div>
+                                <div class="conversation-actions">
+                                    <button class="conversation-action-btn conversation-action-primary" onclick="window.location.href='gestoria_comunicacion.html#CON-2026-0412'">
+                                        <i class="fas fa-reply"></i> Responder
+                                    </button>
+                                    <button class="conversation-action-btn conversation-action-secondary">
+                                        <i class="fas fa-paperclip"></i> Adjuntar documento
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="conversation-item">
+                                <div class="conversation-header">
+                                    <div class="conversation-title">Recordatorio modelo 130</div>
+                                    <div class="conversation-time">25/03/2026</div>
+                                </div>
+                                <div class="conversation-content">
+                                    <strong>Ana García:</strong> Lucas, te recuerdo que el plazo para presentar el modelo 130 del primer trimestre vence el próximo 20 de abril. ¿Necesitas ayuda con algo?
+                                </div>
+                                <div class="conversation-actions">
+                                    <button class="conversation-action-btn conversation-action-primary" onclick="window.location.href='gestoria_comunicacion.html#REM-2026-0325'">
+                                        <i class="fas fa-reply"></i> Responder
+                                    </button>
+                                    <button class="conversation-action-btn conversation-action-secondary">
+                                        <i class="fas fa-calendar-plus"></i> Programar recordatorio
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="client-tasks">
+                            <div class="documents-header">
+                                <h4 class="documents-title">Tareas pendientes</h4>
+                                <button style="background-color: var(--secondary-color); color: var(--dark-color); border: none; padding: 0.4rem 0.8rem; border-radius: var(--border-radius); font-size: 0.8rem; cursor: pointer;" onclick="openTaskModal()">
+                                    <i class="fas fa-plus" style="margin-right: 0.3rem;"></i> Nueva tarea
+                                </button>
+                            </div>
+
+                            <div class="task-item">
+                                <div class="task-checkbox">
+                                    <input type="checkbox" onchange="markTaskComplete(this)">
+                                </div>
+                                <div class="task-status">A</div>
+                                <div class="task-info">
+                                    <div class="task-title">Revisar documentos declaración trimestral Q1 2026</div>
+                                    <div class="task-meta">
+                                        <span>#FIS-2026-0345</span>
+                                        <span>• Vence: 30/03/2026</span>
+                                        <span>• <strong>Alta</strong></span>
+                                    </div>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="task-action-btn" title="Editar" onclick="editTask('FIS-2026-0345')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="task-action-btn" title="Ver detalles" onclick="window.location.href='gestoria_tareas.html#FIS-2026-0345'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="task-item">
+                                <div class="task-checkbox">
+                                    <input type="checkbox" onchange="markTaskComplete(this)">
+                                </div>
+                                <div class="task-status" style="background-color: var(--warning-color);">E</div>
+                                <div class="task-info">
+                                    <div class="task-title">Enviar recordatorio a Lucas Torres sobre documentación pendiente</div>
+                                    <div class="task-meta">
+                                        <span>#ADM-2026-0401</span>
+                                        <span>• Vence: 05/04/2026</span>
+                                        <span>• <strong>Media</strong></span>
+                                    </div>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="task-action-btn" title="Editar" onclick="editTask('ADM-2026-0401')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="task-action-btn" title="Ver detalles" onclick="window.location.href='gestoria_tareas.html#ADM-2026-0401'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="task-item">
+                                <div class="task-checkbox">
+                                    <input type="checkbox" onchange="markTaskComplete(this)">
+                                </div>
+                                <div class="task-status" style="background-color: var(--accent-color);">C</div>
+                                <div class="task-info">
+                                    <div class="task-title">Preparar reunión con Lucas para revisión de documentos</div>
+                                    <div class="task-meta">
+                                        <span>#CON-2026-0405</span>
+                                        <span>• Vence: 10/04/2026</span>
+                                        <span>• <strong>Media</strong></span>
+                                    </div>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="task-action-btn" title="Editar" onclick="editTask('CON-2026-0405')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="task-action-btn" title="Ver detalles" onclick="window.location.href='gestoria_tareas.html#CON-2026-0405'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary-color); font-size: 1rem;">Historial de actividad reciente</h4>
+                            <div style="border-left: 2px solid #eee; padding-left: 1rem;">
+                                <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                                    <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Hace 2 horas</div>
+                                    <div style="font-weight: 500; color: var(--primary-color);">Documentos recibidos</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                        Lucas Torres ha subido los documentos para su declaración trimestral Q1 2026
+                                    </div>
+                                    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                                        <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">recibo_autonomos_marzo.pdf</span>
+                                        <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">justificante_pago_marzo.pdf</span>
+                                    </div>
+                                </div>
+
+                                <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                                    <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--accent-color); border-radius: 50%;"></div>
+                                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Ayer a las 16:45</div>
+                                    <div style="font-weight: 500; color: var(--primary-color);">Mensaje enviado</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                        Ana García ha respondido a Lucas Torres sobre la revisión de documentos
+                                    </div>
+                                </div>
+
+                                <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                                    <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--success-color); border-radius: 50%;"></div>
+                                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">25/03/2026</div>
+                                    <div style="font-weight: 500; color: var(--primary-color);">Tarea completada</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                        Revisión de modelo 130 para Empresa XYZ marcada como completada
+                                    </div>
+                                </div>
+
+                                <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                                    <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--warning-color); border-radius: 50%;"></div>
+                                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">24/03/2026</div>
+                                    <div style="font-weight: 500; color: var(--primary-color);">Recordatorio enviado</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                        Recordatorio enviado a Lucas Torres sobre plazo de modelo 130
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="client-footer">
+                        <button class="footer-action-btn footer-action-primary" onclick="openMessageModal()">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>Enviar Mensaje</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-primary" onclick="openTaskModal()">
+                            <i class="fas fa-tasks"></i>
+                            <span>Crear Tarea</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="openUploadModal()">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Subir Documento</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="openEditClientModal()">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar Cliente</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="openHistoryModal()">
+                            <i class="fas fa-history"></i>
+                            <span>Ver Historial</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="generateReport()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Generar Informe</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Client Modal -->
+    <div class="modal-overlay" id="newClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo Cliente</h3>
+                <button class="modal-close" onclick="closeModal('newClientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newClientType">Tipo de cliente</label>
+                            <select id="newClientType" class="form-input form-select">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="autonomo" selected>Autónomo</option>
+                                <option value="pyme">PYME</option>
+                                <option value="empresa">Gran Empresa</option>
+                                <option value="particular">Particular</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newClientStatus">Estado</label>
+                            <select id="newClientStatus" class="form-input form-select">
+                                <option value="active" selected>Activo</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="inactive">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="newClientName">Nombre/Razón Social</label>
+                    <input type="text" id="newClientName" class="form-input" placeholder="Nombre completo o razón social">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newClientNif">NIF/CIF</label>
+                            <input type="text" id="newClientNif" class="form-input" placeholder="Número de identificación fiscal">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newClientAdvisor">Asesor asignado</label>
+                            <div class="user-selector" onclick="openUserSelector('newClient')">
+                                <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                <span>Ana García (Yo)</span>
+                            </div>
+                            <div class="selected-users" id="newClientAdvisorSelected">
+                                <!-- El asesor seleccionado aparecerá aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Información de contacto</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientPhone">Teléfono</label>
+                                <input type="text" id="newClientPhone" class="form-input" placeholder="Número de teléfono">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientEmail">Email</label>
+                                <input type="email" id="newClientEmail" class="form-input" placeholder="Correo electrónico">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label" for="newClientAddress">Dirección</label>
+                        <input type="text" id="newClientAddress" class="form-input" placeholder="Dirección completa">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Datos fiscales</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientRegimen">Régimen fiscal</label>
+                                <select id="newClientRegimen" class="form-input form-select">
+                                    <option value="">Seleccionar régimen</option>
+                                    <option value="estimacion_directa">Estimación directa</option>
+                                    <option value="estimacion_objetiva">Estimación objetiva</option>
+                                    <option value="simplificado">Régimen simplificado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientActivity">Actividad económica</label>
+                                <input type="text" id="newClientActivity" class="form-input" placeholder="Descripción de la actividad">
+                            </div>
+                        </div>
+                    </div>
+<div class="form-group" style="margin-top: 0.5rem;">
+                            <label class="form-label" for="newClientIae">Epígrafe IAE</label>
+                            <input type="text" id="newClientIae" class="form-input" placeholder="Código de epígrafe IAE">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Datos bancarios</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientBank">Entidad bancaria</label>
+                                <input type="text" id="newClientBank" class="form-input" placeholder="Nombre de la entidad">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="newClientIban">IBAN</label>
+                                <input type="text" id="newClientIban" class="form-input" placeholder="Número IBAN">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label" for="newClientAccountHolder">Titular de la cuenta</label>
+                        <input type="text" id="newClientAccountHolder" class="form-input" placeholder="Nombre del titular">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="newClientNotes">Notas adicionales</label>
+                    <textarea id="newClientNotes" class="form-input form-textarea" placeholder="Información adicional sobre el cliente..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Documentos iniciales</label>
+                    <div class="user-selector" onclick="document.getElementById('newClientDocuments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar documentos</span>
+                    </div>
+                    <input type="file" id="newClientDocuments" style="display: none;" multiple>
+                    <div id="newClientAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los documentos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="newClientSendWelcome">
+                            <label for="newClientSendWelcome">Enviar email de bienvenida</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="newClientCreateTasks">
+                            <label for="newClientCreateTasks">Crear tareas iniciales</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="newClientNotifyTeam">
+                            <label for="newClientNotifyTeam">Notificar al equipo</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('newClientModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createClient()">Crear Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Client Modal -->
+    <div class="modal-overlay" id="editClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Editar Cliente: Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('editClientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="client-properties">
+                    <div class="property-group">
+                        <h4>Información básica</h4>
+                        <div class="property-item">
+                            <div class="property-label">Tipo de cliente</div>
+                            <div class="property-value">
+                                <select class="form-input form-select" style="width: 100%;">
+                                    <option value="autonomo" selected>Autónomo</option>
+                                    <option value="pyme">PYME</option>
+                                    <option value="empresa">Gran Empresa</option>
+                                    <option value="particular">Particular</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Estado</div>
+                            <div class="property-value">
+                                <select class="form-input form-select" style="width: 100%;">
+                                    <option value="active" selected>Activo</option>
+                                    <option value="pending">Pendiente</option>
+                                    <option value="inactive">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Nombre/Razón Social</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="Lucas Torres" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">NIF/CIF</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="12345678A" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Información de contacto</h4>
+                        <div class="property-item">
+                            <div class="property-label">Teléfono</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="654 321 098" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Email</div>
+                            <div class="property-value">
+                                <input type="email" class="form-input" value="lucas.torres@email.com" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Dirección</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="Calle Mayor, 45, 28013 Madrid" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Datos fiscales</h4>
+                        <div class="property-item">
+                            <div class="property-label">Régimen fiscal</div>
+                            <div class="property-value">
+                                <select class="form-input form-select" style="width: 100%;">
+                                    <option value="estimacion_directa" selected>Estimación directa</option>
+                                    <option value="estimacion_objetiva">Estimación objetiva</option>
+                                    <option value="simplificado">Régimen simplificado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Actividad económica</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="841.1 - Servicios de contabilidad" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Epígrafe IAE</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="841.1" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Datos bancarios</h4>
+                        <div class="property-item">
+                            <div class="property-label">Entidad bancaria</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="BBVA" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">IBAN</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="ESXX 2080 1234 5678 9012 3456" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Titular de la cuenta</div>
+                            <div class="property-value">
+                                <input type="text" class="form-input" value="Lucas Torres" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editClientNotes">Notas adicionales</label>
+                    <textarea id="editClientNotes" class="form-input form-textarea" style="width: 100%;">Cliente desde 2020. Autónomo dedicado a servicios de contabilidad para pequeñas empresas. Tiene contratos con varias empresas de la zona y factura mensualmente.
+
+Preferencias:
+- Comunicación principalmente por email
+- Prefiere reuniones los martes o jueves por la mañana
+- Necesita recordatorios para plazos fiscales
+
+Historial: Siempre cumple con los plazos, pero a veces necesita ayuda con la interpretación de normativas complejas.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Asesor asignado</label>
+                    <div class="user-selector" onclick="openUserSelector('editClient')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García</span>
+                    </div>
+                    <div class="selected-users" id="editClientAdvisorSelected">
+                        <!-- El asesor seleccionado aparecerá aquí -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('editClientModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="saveClientChanges()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo Mensaje para Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('messageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="messageSubject">Asunto</label>
+                    <input type="text" id="messageSubject" class="form-input" placeholder="Asunto del mensaje">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="messageContent">Mensaje</label>
+                    <textarea id="messageContent" class="form-input form-textarea" placeholder="Escribe tu mensaje..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messageUrgent">
+                            <label for="messageUrgent">Marcar como urgente</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messageNotifyEmail">
+                            <label for="messageNotifyEmail">Notificar por email</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messageNotifyApp">
+                            <label for="messageNotifyApp">Notificar en la app</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Adjuntos</label>
+                    <div class="user-selector" onclick="document.getElementById('messageAttachments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar archivos</span>
+                    </div>
+                    <input type="file" id="messageAttachments" style="display: none;" multiple>
+                    <div id="messageAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Relacionar con</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="relateToTask">
+                            <label for="relateToTask">Crear nueva tarea</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="relateToDocument">
+                            <label for="relateToDocument">Relacionar con documento</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('messageModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="sendMessage()">Enviar Mensaje</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nueva Tarea para Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Título de la tarea</label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Ej: Revisar documentación fiscal Q1 2026">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Descripción</label>
+                    <textarea id="taskDescription" class="form-input form-textarea" placeholder="Describe detalladamente la tarea..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskCategory">Categoría</label>
+                            <select id="taskCategory" class="form-input form-select">
+                                <option value="">Seleccionar categoría</option>
+                                <option value="fiscal" selected>Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="administrativa">Administrativa</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskPriority">Prioridad</label>
+                            <select id="taskPriority" class="form-input form-select">
+                                <option value="medium">Media</option>
+                                <option value="high" selected>Alta</option>
+                                <option value="low">Baja</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskDeadline">Fecha límite</label>
+                            <input type="date" id="taskDeadline" class="form-input" value="2026-04-15">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskEstimatedTime">Tiempo estimado</label>
+                            <input type="text" id="taskEstimatedTime" class="form-input" placeholder="Ej: 2 horas" value="2 horas">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Asignar a</label>
+                    <div class="user-selector" onclick="openUserSelector('task')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García (Yo)</span>
+                    </div>
+                    <div class="selected-users" id="taskAssignedUsers">
+                        <!-- Los usuarios asignados aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Documentos relacionados</label>
+                    <div class="user-selector" onclick="document.getElementById('taskDocuments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar documentos</span>
+                    </div>
+                    <input type="file" id="taskDocuments" style="display: none;" multiple>
+                    <div id="taskAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los documentos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notificaciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="taskNotifyClient" checked>
+                            <label for="taskNotifyClient">Notificar al cliente por email</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="taskNotifyApp">
+                            <label for="taskNotifyApp">Notificación en la aplicación</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="taskCreateReminder">
+                            <label for="taskCreateReminder">Crear recordatorio automático</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('taskModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createTask()">Crear Tarea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Document Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Subir Documento para Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('uploadModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="uploadDocumentName">Nombre del documento</label>
+                    <input type="text" id="uploadDocumentName" class="form-input" placeholder="Ej: Recibo autónomos marzo 2026">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="uploadDocumentCategory">Categoría</label>
+                            <select id="uploadDocumentCategory" class="form-input form-select">
+                                <option value="">Seleccionar categoría</option>
+                                <option value="fiscal" selected>Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="legal">Legal</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="uploadDocumentType">Tipo de documento</label>
+                            <select id="uploadDocumentType" class="form-input form-select">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="recibo" selected>Recibo</option>
+                                <option value="factura">Factura</option>
+                                <option value="contrato">Contrato</option>
+                                <option value="declaracion">Declaración</option>
+                                <option value="justificante">Justificante</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="uploadDocumentDescription">Descripción</label>
+                    <textarea id="uploadDocumentDescription" class="form-input form-textarea" placeholder="Descripción del contenido del documento..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Archivos</label>
+                    <div class="user-selector" onclick="document.getElementById('uploadFiles').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Seleccionar archivos para subir</span>
+                    </div>
+                    <input type="file" id="uploadFiles" style="display: none;" multiple>
+                    <div id="uploadSelectedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos seleccionados aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadNotifyClient" checked>
+                            <label for="uploadNotifyClient">Notificar al cliente</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadCreateTask">
+                            <label for="uploadCreateTask">Crear tarea de revisión</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadShareTeam">
+                            <label for="uploadShareTeam">Compartir con el equipo</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('uploadModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="uploadDocument()">Subir Documento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Historial de Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Información general</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Fecha de alta</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">15/01/2020</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Asesor asignado</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Ana García</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Tipo de cliente</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Autónomo</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Estado actual</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Activo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Estadísticas</h4>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div style="text-align: center; background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">42</div>
+                            <div style="font-size: 0.8rem; color: #666;">Documentos</div>
+                        </div>
+                        <div style="text-align: center; background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">28</div>
+                            <div style="font-size: 0.8rem; color: #666;">Tareas</div>
+                        </div>
+                        <div style="text-align: center; background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">56</div>
+                            <div style="font-size: 0.8rem; color: #666;">Mensajes</div>
+                        </div>
+                        <div style="text-align: center; background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.5rem; color: var(--primary-color); font-weight: 600;">12</div>
+                            <div style="font-size: 0.8rem; color: #666;">Notificaciones</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Actividad reciente</h4>
+                    <div style="border-left: 2px solid #eee; padding-left: 1rem;">
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Hace 2 horas</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Documentos recibidos</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Se recibieron los documentos para la declaración trimestral Q1 2026
+                            </div>
+                            <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">recibo_autonomos_marzo.pdf</span>
+                                <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">justificante_pago_marzo.pdf</span>
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--accent-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Ayer a las 16:45</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Mensaje enviado</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Ana García respondió al cliente sobre la revisión de documentos
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--success-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">25/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Tarea completada</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Revisión de modelo 130 para Empresa XYZ marcada como completada
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--warning-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">24/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Recordatorio enviado</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Recordatorio enviado a Lucas Torres sobre plazo de modelo 130
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">20/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Declaración enviada</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Declaración anual 2025 enviada a AEAT con éxito
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--accent-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">15/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Reunión realizada</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Reunión de preparación para declaración anual con el cliente
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Documentos recientes</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 0.2rem;">declaracion_anual_2025.pdf</div>
+                                <div style="font-size: 0.8rem; color: #666;">1.8MB • 20/03/2026 • Fiscal</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 0.2rem;">modelo_130_q1_2026.pdf</div>
+                                <div style="font-size: 0.8rem; color: #666;">950KB • 10/03/2026 • Fiscal</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--accent-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color); margin-bottom: 0.2rem;">libro_facturas_2025.xlsx</div>
+                                <div style="font-size: 0.8rem; color: #666;">1.2MB • 05/03/2026 • Contable</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer; font-size: 0.9rem;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal('historyModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Clients Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Importar Clientes</h3>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 0.75rem;">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Importar clientes desde archivo</h4>
+                    <p style="color: #666; font-size: 0.9rem;">Sube un archivo CSV o Excel con la información de los clientes</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Seleccionar archivo</label>
+                    <div class="user-selector" onclick="document.getElementById('importFile').click()" style="justify-content: center; padding: 1.5rem; border: 2px dashed #ddd; margin-bottom: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--secondary-color); margin-bottom: 0.5rem;">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Arrastra archivos aquí o haz clic para seleccionar</div>
+                            <div style="font-size: 0.8rem; color: #666; margin-top: 0.3rem;">Formatos permitidos: CSV, XLS, XLSX</div>
+                        </div>
+                    </div>
+                    <input type="file" id="importFile" style="display: none;" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    <div id="importFileName" style="text-align: center; font-size: 0.9rem; color: var(--primary-color); margin-top: 0.5rem;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de importación</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importOverwrite" checked>
+                            <label for="importOverwrite">Sobrescribir clientes existentes</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importNotify">
+                            <label for="importNotify">Notificar a los asesores asignados</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importSendWelcome">
+                            <label for="importSendWelcome">Enviar email de bienvenida a nuevos clientes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="importAdvisor">Asesor por defecto</label>
+                    <div class="user-selector" onclick="openUserSelector('import')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García</span>
+                    </div>
+                    <div class="selected-users" id="importAdvisorSelected">
+                        <!-- El asesor seleccionado aparecerá aquí -->
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer; font-size: 0.9rem;" onclick="downloadTemplate()">
+                        <i class="fas fa-download" style="margin-right: 0.5rem;"></i> Descargar plantilla
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('importModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="importClients()">Importar Clientes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Selector Modal -->
+    <div class="modal-overlay" id="userSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Seleccionar Usuario</h3>
+                <button class="modal-close" onclick="closeModal('userSelectorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="userSearch">Buscar usuario</label>
+                    <div class="search-container" style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #999;"></i>
+                        <input type="text" id="userSearch" class="form-input" placeholder="Nombre, email o departamento..." style="padding-left: 2.25rem;" oninput="filterUsers()">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; max-height: 300px; overflow-y: auto;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">AG</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Ana García</div>
+                            <div style="font-size: 0.8rem; color: #666;">Asesora Fiscal • ana@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">CM</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Carlos Martínez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Contabilidad • carlos@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">LG</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Laura Gómez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Asistente • laura@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">JR</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Javier Rodríguez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Laboral • javier@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">MS</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Marta Sánchez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Administración • marta@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">PR</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Pablo Ruiz</div>
+                            <div style="font-size: 0.8rem; color: #666;">Gerente • pablo@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 1rem;">
+                <button class="modal-btn modal-btn-primary" onclick="confirmUserSelection()">Seleccionar Usuario</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentUserContext = '';
+        let currentModalContext = '';
+
+        // Función para alternar el sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Función para alternar el dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const userDropdown = document.getElementById('userDropdown');
+
+            if (!userProfile.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Función para cargar un cliente
+        function loadClient(clientId) {
+            // Marcar como seleccionado
+            document.querySelectorAll('.client-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Actualizar el contenido según el cliente seleccionado
+            const clientData = {
+                'lucas-torres': {
+                    name: 'Lucas Torres',
+                    nif: '12345678A',
+                    type: 'Autónomo',
+                    status: 'active',
+                    advisor: 'Ana García',
+                    joinDate: '15/01/2020',
+                    phone: '654 321 098',
+                    email: 'lucas.torres@email.com',
+                    address: 'Calle Mayor, 45, 28013 Madrid',
+                    fiscalRegime: 'Estimación directa',
+                    activity: '841.1 - Servicios de contabilidad',
+                    iae: '841.1',
+                    bank: 'BBVA',
+                    iban: 'ESXX 2080 1234 5678 9012 3456',
+                    accountHolder: 'Lucas Torres',
+                    notes: 'Cliente desde 2020. Autónomo dedicado a servicios de contabilidad para pequeñas empresas. Tiene contratos con varias empresas de la zona y factura mensualmente.\n\nPreferencias:\n- Comunicación principalmente por email\n- Prefiere reuniones los martes o jueves por la mañana\n- Necesita recordatorios para plazos fiscales\n\nHistorial: Siempre cumple con los plazos, pero a veces necesita ayuda con la interpretación de normativas complejas.',
+                    documents: [
+                        { name: 'recibo_autonomos_marzo.pdf', size: '1.2MB', date: '25/03/2026', type: 'Fiscal' },
+                        { name: 'justificante_pago_marzo.pdf', size: '800KB', date: '25/03/2026', type: 'Fiscal' },
+                        { name: 'facturas_q1_2026.xlsx', size: '450KB', date: '10/03/2026', type: 'Contable' },
+                        { name: 'contrato_servicios.docx', size: '320KB', date: '05/02/2026', type: 'Legal' }
+                    ],
+                    conversations: [
+                        {
+                            id: 'FIS-2026-0345',
+                            time: 'Hace 2 horas',
+                            title: 'Revisión documentación fiscal Q1',
+                            content: 'Lucas Torres: Buenos días, necesito ayuda con la declaración trimestral. ¿Podrían revisar los documentos que adjunto?',
+                            type: 'client'
+                        },
+                        {
+                            id: 'CON-2026-0412',
+                            time: 'Ayer a las 16:45',
+                            title: 'Consulta sobre deducciones',
+                            content: 'Ana García: Lucas, he revisado tus deducciones y todo parece correcto. Solo necesito que me confirmes el justificante de la inversión en equipo informático.',
+                            type: 'advisor'
+                        },
+                        {
+                            id: 'REM-2026-0325',
+                            time: '25/03/2026',
+                            title: 'Recordatorio modelo 130',
+                            content: 'Ana García: Lucas, te recuerdo que el plazo para presentar el modelo 130 del primer trimestre vence el próximo 20 de abril. ¿Necesitas ayuda con algo?',
+                            type: 'advisor'
+                        }
+                    ],
+                    tasks: [
+                        {
+                            id: 'FIS-2026-0345',
+                            title: 'Revisar documentos declaración trimestral Q1 2026',
+                            status: 'A',
+                            deadline: '30/03/2026',
+                            priority: 'Alta',
+                            category: 'Fiscal'
+                        },
+                        {
+                            id: 'ADM-2026-0401',
+                            title: 'Enviar recordatorio a Lucas Torres sobre documentación pendiente',
+                            status: 'E',
+                            deadline: '05/04/2026',
+                            priority: 'Media',
+                            category: 'Administrativa'
+                        },
+                        {
+                            id: 'CON-2026-0405',
+                            title: 'Preparar reunión con Lucas para revisión de documentos',
+                            status: 'C',
+                            deadline: '10/04/2026',
+                            priority: 'Media',
+                            category: 'Contable'
+                        }
+                    ],
+                    stats: {
+                        documents: 12,
+                        tasks: 8,
+                        messages: 24,
+                        notifications: 3
+                    }
+                },
+                'empresa-xyz': {
+                    name: 'Empresa XYZ, S.L.',
+                    nif: 'B12345678',
+                    type: 'PYME',
+                    status: 'active',
+                    advisor: 'Carlos Martínez',
+                    joinDate: '03/05/2019',
+                    phone: '912 345 678',
+                    email: 'contacto@empresaxyz.com',
+                    address: 'Avenida Diagonal, 123, 08018 Barcelona',
+                    fiscalRegime: 'Régimen general',
+                    activity: '4669 - Comercio al por mayor de otra maquinaria y equipo',
+                    iae: '466.9',
+                    bank: 'CaixaBank',
+                    iban: 'ESXX 2100 1234 5678 9012 3456',
+                    accountHolder: 'Empresa XYZ, S.L.',
+                    notes: 'Empresa dedicada al comercio de maquinaria industrial. Facturación anual de aproximadamente 2.5 millones de euros. Tiene 15 empleados y opera principalmente en Cataluña y Madrid.\n\nPreferencias:\n- Comunicación por email y teléfono\n- Prefiere reuniones los lunes por la tarde\n- Necesita apoyo en la gestión de nóminas y seguros sociales\n\nHistorial: Cliente muy organizado que cumple siempre con los plazos. Requiere atención especial en la declaración de IVA por sus operaciones intracomunitarias.',
+                    documents: [
+                        { name: 'balance_2025.pdf', size: '2.1MB', date: '15/03/2026', type: 'Contable' },
+                        { name: 'libro_facturas_q1_2026.xlsx', size: '1.8MB', date: '10/03/2026', type: 'Contable' },
+                        { name: 'contrato_proveedor_abc.pdf', size: '650KB', date: '05/02/2026', type: 'Legal' }
+                    ],
+                    conversations: [
+                        {
+                            id: 'CON-2026-0340',
+                            time: 'Hace 3 horas',
+                            title: 'Consulta sobre facturas pendientes',
+                            content: 'Empresa XYZ: Buenos días, necesitamos ayuda con varias facturas pendientes de cobro del último trimestre.',
+                            type: 'client'
+                        },
+                        {
+                            id: 'LAB-2026-0315',
+                            time: '18/03/2026',
+                            title: 'Nóminas febrero 2026',
+                            content: 'Carlos Martínez: He preparado las nóminas de febrero. Por favor, revisen los datos bancarios de los nuevos empleados.',
+                            type: 'advisor'
+                        }
+                    ],
+                    tasks: [
+                        {
+                            id: 'CON-2026-0340',
+                            title: 'Revisar facturas pendientes Q1 2026',
+                            status: 'A',
+                            deadline: '08/04/2026',
+                            priority: 'Alta',
+                            category: 'Contable'
+                        },
+                        {
+                            id: 'LAB-2026-0405',
+                            title: 'Preparar nóminas abril 2026',
+                            status: 'P',
+                            deadline: '25/04/2026',
+                            priority: 'Media',
+                            category: 'Laboral'
+                        }
+                    ],
+                    stats: {
+                        documents: 18,
+                        tasks: 5,
+                        messages: 32,
+                        notifications: 2
+                    }
+                }
+            };
+
+            const data = clientData[clientId] || clientData['lucas-torres'];
+
+            // Actualizar el título y contenido
+            document.querySelector('.client-title').textContent = data.name;
+            document.querySelector('.client-header-bar .user-avatar').textContent = data.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+
+            // Actualizar información básica
+            document.querySelector('.client-header-bar .client-name').textContent = data.name;
+            document.querySelector('.client-header-bar .client-name').nextElementSibling.querySelector('span:first-child').textContent = data.nif;
+            document.querySelector('.client-header-bar .client-name').nextElementSibling.querySelector('span:nth-child(2)').textContent = data.type;
+            document.querySelector('.client-header-bar .client-status').textContent = data.status === 'active' ? 'Activo' :
+                                                                                     data.status === 'pending' ? 'Pendiente' : 'Inactivo';
+            document.querySelector('.client-header-bar .client-status').className = 'client-status status-' + data.status;
+
+            document.querySelector('.client-header-bar .client-advisor-name').textContent = data.advisor.name;
+            document.querySelector('.client-header-bar .client-advisor-avatar').textContent = data.advisor.initials;
+document.querySelector('.client-header-bar .client-join-date').textContent = data.joinDate;
+            document.querySelector('.client-header-bar .client-advisor-name').textContent = data.advisor.name;
+            document.querySelector('.client-header-bar .client-advisor-avatar').textContent = data.advisor.initials;
+
+            // Actualizar información de contacto
+            document.querySelector('.info-value [style*="654 321 098"]').textContent = data.contact.phone;
+            document.querySelector('.info-value [style*="lucas.torres@email.com"]').textContent = data.contact.email;
+            document.querySelector('.info-value [style*="Calle Mayor, 45"]').textContent = data.contact.address;
+
+            // Actualizar datos fiscales
+            document.querySelector('.info-value [style*="12345678A"]').textContent = data.fiscal.nif;
+            document.querySelector('.info-value [style*="Estimación directa"]').textContent = data.fiscal.regimen;
+            document.querySelector('.info-value [style*="841.1 - Servicios"]').textContent = data.fiscal.activity;
+            document.querySelector('.info-value [style*="841.1"]').textContent = data.fiscal.iae;
+
+            // Actualizar información laboral
+            document.querySelector('.info-value [style*="Autónomo en activo"]').textContent = data.laboral.status;
+            document.querySelector('.info-value [style*="01/01/2018"]').textContent = data.laboral.joinDate;
+            document.querySelector('.info-value [style*="1.230,00 €"]').textContent = data.laboral.baseCotizacion;
+            document.querySelector('.info-value [style*="Asepeyo"]').textContent = data.laboral.mutua;
+
+            // Actualizar datos bancarios
+            document.querySelector('.info-value [style*="BBVA"]').textContent = data.bank.entity;
+            document.querySelector('.info-value [style*="ESXX 2080"]').textContent = data.bank.iban;
+            document.querySelector('.info-value [style*="Lucas Torres"]').textContent = data.bank.holder;
+
+            // Actualizar notas adicionales
+            document.querySelector('.description-content').innerHTML = data.notes;
+
+            // Actualizar estadísticas
+            document.querySelectorAll('.client-detail-content div[style*="font-size: 1.5rem"]')[0].textContent = data.stats.documents;
+            document.querySelectorAll('.client-detail-content div[style*="font-size: 1.5rem"]')[1].textContent = data.stats.tasks;
+            document.querySelectorAll('.client-detail-content div[style*="font-size: 1.5rem"]')[2].textContent = data.stats.messages;
+            document.querySelectorAll('.client-detail-content div[style*="font-size: 1.5rem"]')[3].textContent = data.stats.notifications;
+
+            // Actualizar documentos
+            const documentsContainer = document.querySelector('.document-list');
+            documentsContainer.innerHTML = '';
+
+            data.documents.forEach(doc => {
+                const docElement = document.createElement('div');
+                docElement.className = 'document-item';
+                docElement.innerHTML = `
+                    <div class="document-icon">
+                        ${getFileIcon(doc.name)}
+                    </div>
+                    <div class="document-info">
+                        <div class="document-name">${doc.name}</div>
+                        <div class="document-meta">\${doc.size} • Subido: \${doc.date} • <span style="color: ${getCategoryColor(doc.category)};">${doc.category}</span></div>
+                    </div>
+                    <div class="document-actions">
+                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('${doc.name}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('${doc.name}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="document-action-btn" title="Compartir" onclick="shareDocument('\${doc.name}')">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                `;
+                documentsContainer.appendChild(docElement);
+            });
+
+            // Actualizar conversaciones
+            const conversationsContainer = document.querySelectorAll('.client-conversations .conversation-item');
+            conversationsContainer.forEach((conv, index) => {
+                if (data.conversations[index]) {
+                    const conversation = data.conversations[index];
+                    conv.querySelector('.conversation-title').textContent = conversation.title;
+                    conv.querySelector('.conversation-time').textContent = conversation.time;
+                    conv.querySelector('.conversation-content').innerHTML = `<strong>${conversation.sender}:</strong> ${conversation.message}`;
+                }
+            });
+
+            // Actualizar tareas
+            const tasksContainer = document.querySelectorAll('.client-tasks .task-item');
+            tasksContainer.forEach((task, index) => {
+                if (data.tasks[index]) {
+                    const taskData = data.tasks[index];
+                    task.querySelector('.task-title').textContent = taskData.title;
+                    task.querySelector('.task-meta span\:first-child').textContent = taskData.id;
+                    task.querySelector('.task-meta span\:nth-child(2)').textContent = `• Vence: ${taskData.deadline}`;
+                    task.querySelector('.task-meta span\:last-child').textContent = `• <strong>${taskData.priority}</strong>`;
+                    task.querySelector('.task-status').style.backgroundColor = getTaskStatusColor(taskData.status);
+                    task.querySelector('.task-status').textContent = taskData.statusInitial;
+                }
+            });
+        }
+
+        // Función para cargar cliente por defecto
+        function loadDefaultClient() {
+            loadClient('lucas-torres');
+        }
+
+        // Función para abrir modal de nuevo cliente
+        function openNewClientModal() {
+            document.getElementById('newClientModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de importación
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de edición de cliente
+        function openEditClientModal() {
+            document.getElementById('editClientModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de mensaje
+        function openMessageModal() {
+            document.getElementById('messageModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de tarea
+        function openTaskModal() {
+            document.getElementById('taskModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de subida de documentos
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de historial
+        function openHistoryModal() {
+            document.getElementById('historyModal').style.display = 'flex';
+        }
+
+        // Función para marcar tarea como completada
+        function markTaskComplete(checkbox) {
+            const taskItem = checkbox.closest('.task-item');
+            if (checkbox.checked) {
+                taskItem.style.opacity = '0.7';
+                alert('Tarea marcada como completada');
+            } else {
+                taskItem.style.opacity = '1';
+            }
+        }
+
+        // Función para editar tarea
+        function editTask(taskId) {
+            alert(`Editando tarea ${taskId}`);
+        }
+
+        // Función para descargar documento
+        function downloadDocument(filename) {
+            alert(`Descargando documento: ${filename}`);
+        }
+
+        // Función para ver vista previa de documento
+        function previewDocument(filename) {
+            alert(`Mostrando vista previa de: ${filename}`);
+        }
+
+        // Función para compartir documento
+        function shareDocument(filename) {
+            alert(`Compartiendo documento: ${filename}`);
+        }
+
+        // Función para generar informe
+        function generateReport() {
+            alert('Generando informe del cliente...');
+        }
+
+        // Función para filtrar clientes
+        function filterClients() {
+            const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+            const typeFilter = document.querySelector('.filter-select').value;
+            const statusFilter = document.querySelectorAll('.filter-select')[1].value;
+            const advisorFilter = document.querySelectorAll('.filter-select')[2].value;
+
+            document.querySelectorAll('.client-item').forEach(item => {
+                const name = item.querySelector('.client-name').textContent.toLowerCase();
+                const type = item.querySelector('.client-meta span\:nth-child(2)').textContent;
+                const status = item.querySelector('.client-status').textContent;
+                const advisor = item.querySelector('.client-meta i.fa-user').nextSibling.textContent.trim();
+
+                let matches = true;
+
+                // Filtrar por término de búsqueda
+                if (searchTerm && !name.includes(searchTerm)) {
+                    matches = false;
+                }
+
+                // Filtrar por tipo
+                if (typeFilter && typeFilter !== '' && !type.includes(typeFilter === 'autonomo' ? 'Autónomo' :
+                    typeFilter === 'pyme' ? 'PYME' :
+                    typeFilter === 'empresa' ? 'Gran Empresa' : 'Particular')) {
+                    matches = false;
+                }
+
+                // Filtrar por estado
+                if (statusFilter && statusFilter !== '' && !status.includes(statusFilter === 'active' ? 'Activo' :
+                    statusFilter === 'pending' ? 'Pendiente' : 'Inactivo')) {
+                    matches = false;
+                }
+
+                // Filtrar por asesor
+                if (advisorFilter && advisorFilter !== '' && !advisor.includes(advisorFilter === 'ana' ? 'Ana García' :
+                    advisorFilter === 'carlos' ? 'Carlos Martínez' :
+                    advisorFilter === 'javier' ? 'Javier Rodríguez' : 'Laura Gómez')) {
+                    matches = false;
+                }
+
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // Función para aplicar filtros
+        function applyFilters() {
+            filterClients();
+        }
+
+        // Función para obtener icono de archivo
+        function getFileIcon(filename) {
+            if (filename.endsWith('.pdf')) return '<i class="fas fa-file-pdf"></i>';
+            if (filename.endsWith('.doc') || filename.endsWith('.docx')) return '<i class="fas fa-file-word"></i>';
+            if (filename.endsWith('.xls') || filename.endsWith('.xlsx')) return '<i class="fas fa-file-excel"></i>';
+            if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) return '<i class="fas fa-file-image"></i>';
+            if (filename.endsWith('.zip') || filename.endsWith('.rar')) return '<i class="fas fa-file-archive"></i>';
+            return '<i class="fas fa-file-alt"></i>';
+        }
+
+        // Función para obtener color de categoría
+        function getCategoryColor(category) {
+            switch(category) {
+                case 'Fiscal': return 'var(--secondary-color)';
+                case 'Contable': return 'var(--accent-color)';
+                case 'Legal': return '#9b59b6';
+                case 'Laboral': return '#4caf50';
+                default: return '#666';
+            }
+        }
+
+        // Función para obtener color de estado de tarea
+        function getTaskStatusColor(status) {
+            switch(status) {
+                case 'Alta': return 'var(--danger-color)';
+                case 'Media': return 'var(--warning-color)';
+                case 'Baja': return 'var(--success-color)';
+                default: return 'var(--secondary-color)';
+            }
+        }
+
+        // Función para abrir modal
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Función para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal-overlay[style="display: flex;"]');
+                openModals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar cliente por defecto
+            loadDefaultClient();
+
+            // Configurar el selector de usuario
+            document.getElementById('userSearch').addEventListener('input', filterUsers);
+
+            // Configurar la selección de archivos
+            document.getElementById('uploadDocuments').addEventListener('change', function(e) {
+                const selectedFiles = document.getElementById('uploadedFiles');
+                selectedFiles.innerHTML = '';
+
+                for (const file of e.target.files) {
+                    const fileItem = document.createElement('div');
+                    fileItem.style.display = 'flex';
+                    fileItem.style.alignItems = 'center';
+                    fileItem.style.gap = '0.75rem';
+                    fileItem.style.padding = '0.5rem';
+                    fileItem.style.backgroundColor = '#f9f9f9';
+                    fileItem.style.borderRadius = '4px';
+                    fileItem.style.marginBottom = '0.5rem';
+
+                    const fileSize = (file.size / 1024).toFixed(file.size < 1024000 ? 2 : 1);
+                    const fileSizeUnit = file.size < 1024000 ? 'KB' : 'MB';
+
+                    fileItem.innerHTML = `
+                        <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                            \${getFileIcon(file.name)}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">\${file.name}</div>
+                            <div style="font-size: 0.8rem; color: #666;">\${fileSize} \${fileSizeUnit}</div>
+                        </div>
+                        <button style="background: none; border: none; color: #666; cursor: pointer;" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+
+                    selectedFiles.appendChild(fileItem);
+                }
+            });
+        });
+    </script>
+
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Importar Clientes</h3>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="importMethod">Método de importación</label>
+                    <select id="importMethod" class="form-input form-select">
+                        <option value="csv">Archivo CSV</option>
+                        <option value="excel">Archivo Excel</option>
+                        <option value="api">API externa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Seleccionar archivo</label>
+                    <div class="user-selector" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-file-import"></i>
+                        <span>Seleccionar archivo para importar</span>
+                    </div>
+                    <input type="file" id="importFile" style="display: none;" accept=".csv,.xlsx,.xls">
+                    <div id="importFileName" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de importación</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importOverwrite" checked>
+                            <label for="importOverwrite">Sobrescribir clientes existentes</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importNotify">
+                            <label for="importNotify">Notificar a asesores asignados</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="importCreateTasks">
+                            <label for="importCreateTasks">Crear tareas de bienvenida</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="importAdvisor">Asesor por defecto</label>
+                    <div class="user-selector" onclick="openUserSelector('import')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García</span>
+                    </div>
+                    <div class="selected-users" id="importAdvisorSelected">
+                        <!-- El asesor seleccionado aparecerá aquí -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('importModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="importClients()">Importar Clientes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Client Modal -->
+    <div class="modal-overlay" id="editClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Editar Cliente: Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('editClientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editClientType">Tipo de cliente</label>
+                            <select id="editClientType" class="form-input form-select">
+                                <option value="autonomo" selected>Autónomo</option>
+                                <option value="pyme">PYME</option>
+                                <option value="empresa">Gran Empresa</option>
+                                <option value="particular">Particular</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editClientStatus">Estado</label>
+                            <select id="editClientStatus" class="form-input form-select">
+                                <option value="active" selected>Activo</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="inactive">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editClientName">Nombre/Razón Social</label>
+                    <input type="text" id="editClientName" class="form-input" value="Lucas Torres">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editClientNif">NIF/CIF</label>
+                            <input type="text" id="editClientNif" class="form-input" value="12345678A">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editClientAdvisor">Asesor asignado</label>
+                            <div class="user-selector" onclick="openUserSelector('editClient')">
+                                <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                <span>Ana García</span>
+                            </div>
+                            <div class="selected-users" id="editClientAdvisorSelected">
+                                <!-- El asesor seleccionado aparecerá aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Información de contacto</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientPhone">Teléfono</label>
+                                <input type="text" id="editClientPhone" class="form-input" value="654 321 098">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientEmail">Email</label>
+                                <input type="email" id="editClientEmail" class="form-input" value="lucas.torres@email.com">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label" for="editClientAddress">Dirección</label>
+                        <input type="text" id="editClientAddress" class="form-input" value="Calle Mayor, 45, 28013 Madrid">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Datos fiscales</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientRegimen">Régimen fiscal</label>
+                                <select id="editClientRegimen" class="form-input form-select">
+                                    <option value="estimacion_directa" selected>Estimación directa</option>
+                                    <option value="estimacion_objetiva">Estimación objetiva</option>
+                                    <option value="simplificado">Régimen simplificado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientActivity">Actividad económica</label>
+                                <input type="text" id="editClientActivity" class="form-input" value="841.1 - Servicios de contabilidad">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label class="form-label" for="editClientIae">Epígrafe IAE</label>
+                        <input type="text" id="editClientIae" class="form-input" value="841.1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Información laboral</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientLaboralStatus">Situación</label>
+                                <select id="editClientLaboralStatus" class="form-input form-select">
+                                    <option value="autonomo_activo" selected>Autónomo en activo</option>
+                                    <option value="autonomo_baja">Autónomo de baja</option>
+                                    <option value="asalariado">Asalariado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientLaboralJoinDate">Fecha alta</label>
+                                <input type="date" id="editClientLaboralJoinDate" class="form-input" value="2018-01-01">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientBaseCotizacion">Base cotización</label>
+                                <input type="text" id="editClientBaseCotizacion" class="form-input" value="1.230,00 €">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group" style="margin-bottom: 0.5rem;">
+                                <label class="form-label" for="editClientMutua">Mutua</label>
+                                <input type="text" id="editClientMutua" class="form-input" value="Asepeyo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Datos bancarios</label>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label" for="editClientBankEntity">Entidad</label>
+                            <input type="text" id="editClientBankEntity" class="form-input" value="BBVA">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label class="form-label" for="editClientBankIban">IBAN</label>
+                            <input type="text" id="editClientBankIban" class="form-input" value="ESXX 2080 1234 5678 9012 3456">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editClientBankHolder">Titular</label>
+                            <input type="text" id="editClientBankHolder" class="form-input" value="Lucas Torres">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editClientNotes">Notas adicionales</label>
+                    <textarea id="editClientNotes" class="form-input form-textarea">Cliente desde 2020. Autónomo dedicado a servicios de contabilidad para pequeñas empresas. Tiene contratos con varias empresas de la zona y factura mensualmente.
+
+Preferencias:
+- Comunicación principalmente por email
+- Prefiere reuniones los martes o jueves por la mañana
+- Necesita recordatorios para plazos fiscales
+
+Historial: Siempre cumple con los plazos, pero a veces necesita ayuda con la interpretación de normativas complejas.</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('editClientModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="saveClientChanges()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo Mensaje para Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('messageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="messageSubject">Asunto</label>
+                    <input type="text" id="messageSubject" class="form-input" placeholder="Asunto del mensaje">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="messageContent">Mensaje</label>
+                    <textarea id="messageContent" class="form-input form-textarea" placeholder="Escribe tu mensaje..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messagePriority">
+                            <label for="messagePriority">Alta prioridad</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messageReadReceipt">
+                            <label for="messageReadReceipt">Confirmación de lectura</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="messageNotifyEmail">
+                            <label for="messageNotifyEmail">Notificar por email</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Adjuntos</label>
+                    <div class="user-selector" onclick="document.getElementById('messageAttachments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar archivos</span>
+                    </div>
+                    <input type="file" id="messageAttachments" style="display: none;" multiple>
+                    <div id="messageAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('messageModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="sendMessage()">Enviar Mensaje</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Subir Documentos para Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('uploadModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="uploadCategory">Categoría</label>
+                    <select id="uploadCategory" class="form-input form-select">
+                        <option value="">Seleccionar categoría</option>
+                        <option value="fiscal" selected>Fiscal</option>
+                        <option value="laboral">Laboral</option>
+                        <option value="contable">Contable</option>
+                        <option value="legal">Legal</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Seleccionar archivos</label>
+                    <div class="user-selector" onclick="document.getElementById('uploadDocuments').click()">
+                        <i class="fas fa-file-upload"></i>
+                        <span>Seleccionar archivos para subir</span>
+                    </div>
+                    <input type="file" id="uploadDocuments" style="display: none;" multiple>
+                    <div id="uploadedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos seleccionados aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="uploadDescription">Descripción</label>
+                    <textarea id="uploadDescription" class="form-input form-textarea" placeholder="Descripción de los documentos..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadNotifyClient" checked>
+                            <label for="uploadNotifyClient">Notificar al cliente</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadCreateTask">
+                            <label for="uploadCreateTask">Crear tarea de revisión</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="uploadShareTeam">
+                            <label for="uploadShareTeam">Compartir con el equipo</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('uploadModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="uploadDocuments()">Subir Documentos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Historial de Lucas Torres</h3>
+                <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Información general</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Fecha de alta</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">15/01/2020</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Asesor asignado</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Ana García</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Tipo de cliente</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Autónomo</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.3rem;">Estado actual</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Activo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Estadísticas</h4>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">42</div>
+                            <div style="font-size: 0.8rem; color: #666;">Documentos</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">28</div>
+                            <div style="font-size: 0.8rem; color: #666;">Tareas completadas</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">87</div>
+                            <div style="font-size: 0.8rem; color: #666;">Mensajes</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">12</div>
+                            <div style="font-size: 0.8rem; color: #666;">Notificaciones</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Actividad reciente</h4>
+                    <div style="border-left: 2px solid #eee; padding-left: 1rem;">
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Hoy 10:45</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Documentos recibidos</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Lucas Torres ha subido documentos para su declaración trimestral Q1 2026
+                            </div>
+                            <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                                <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">recibo_autonomos_marzo.pdf</span>
+                                <span style="background-color: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">justificante_pago_marzo.pdf</span>
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--accent-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">Ayer 16:45</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Mensaje enviado</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Ana García ha respondido a Lucas Torres sobre la revisión de documentos
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--success-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">25/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Tarea completada</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Revisión de modelo 130 para Empresa XYZ marcada como completada
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--warning-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">24/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Recordatorio enviado</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Recordatorio enviado a Lucas Torres sobre plazo de modelo 130
+                            </div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--danger-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">20/03/2026</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Notificación recibida</div>
+                            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.3rem;">
+                                Notificación de AEAT sobre cambios en normativa de IVA
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Documentos recientes</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">recibo_autonomos_marzo.pdf</div>
+                                <div style="font-size: 0.8rem; color: #666;">1.2MB • 25/03/2026 • Fiscal</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">justificante_pago_marzo.pdf</div>
+                                <div style="font-size: 0.8rem; color: #666;">800KB • 25/03/2026 • Fiscal</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius);">
+                            <div style="color: var(--accent-color); font-size: 1.2rem;">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">facturas_q1_2026.xlsx</div>
+                                <div style="font-size: 0.8rem; color: #666;">450KB • 10/03/2026 • Contable</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #666; cursor: pointer;" title="Vista previa">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal('historyModal')">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

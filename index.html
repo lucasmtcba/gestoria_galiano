@@ -3,68 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestoría Digital Galiano</title>
+    <title>Gestoría Digital Galiano - Inicio</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Segoe UI', 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-        .header {
-            background-color: #1a1a1a;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid #d4af37;
-        }
-        .logo {
-            font-size: 36px;
-            font-weight: bold;
-            color: #d4af37;
-        }
-        .container {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 80vh;
-            flex-direction: column;
+            height: 100vh;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .card {
-            background-color: #2a2a2a;
-            border-radius: 10px;
-            padding: 30px;
+
+        .login-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            margin: 20px;
-            width: 300px;
         }
+
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        .role-selector {
+            margin-bottom: 20px;
+        }
+
+        .role-selector h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .role-card {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid transparent;
+        }
+
+        .role-card:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+
+        .role-icon {
+            font-size: 24px;
+            color: var(--secondary-color);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-info h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+
+        .role-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
         .btn {
-            background-color: #d4af37;
-            color: #1a1a1a;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
             border: none;
             padding: 12px 20px;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 10px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
         }
+
         .btn:hover {
             background-color: #b8952d;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+                margin: 0 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="login-container">
         <div class="logo">Gestoría Galiano</div>
-    </div>
-    <div class="container">
-        <div class="card">
-            <h2>Selecciona tu rol</h2>
-            <button class="btn" onclick="window.location.href='cliente_home.html'">Cliente</button>
-            <button class="btn" onclick="window.location.href='gestoria_login.html'">Gestoría</button>
+
+        <div class="role-selector">
+            <h2>Selecciona tu perfil</h2>
+
+            <div class="role-card" onclick="window.location.href='cliente/cliente_home.html'">
+                <div class="role-icon">👤</div>
+                <div class="role-info">
+                    <h3>Acceso Cliente</h3>
+                    <p>Accede a tu área personal</p>
+                </div>
+            </div>
+
+            <div class="role-card" onclick="window.location.href='gestoria/gestoria_login.html'">
+                <div class="role-icon">💼</div>
+                <div class="role-info">
+                    <h3>Acceso Gestoría</h3>
+                    <p>Panel de gestión profesional</p>
+                </div>
+            </div>
         </div>
+
+        <button class="btn" onclick="window.location.href='cliente/cliente_home.html'">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </button>
     </div>
+
+    <div class="footer">
+        Gestoría Digital Galiano © 2026 | Plataforma de gestión profesional
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </body>
 </html>

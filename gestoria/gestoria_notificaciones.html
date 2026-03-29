@@ -1,0 +1,2643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Notificaciones | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 0.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-item .menu-text {
+            display: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .menu-icon {
+            font-size: 1.1rem;
+        }
+
+        .menu-text {
+            font-size: 0.9rem;
+        }
+
+        .notification-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Notifications Container */
+        .notifications-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Notifications Sidebar */
+        .notifications-sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            padding: 0 1.25rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quick-action-btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .quick-action-btn.primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .quick-action-btn.secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .search-box {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filters-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+
+        .notification-stats {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .notification-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .notification-item {
+            padding: 0.8rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .notification-item.unread {
+            background-color: #e8f4f8;
+            font-weight: 500;
+        }
+
+        .notification-item.selected {
+            background-color: #e0e8f0;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .notification-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-processed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-urgent {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Notification Detail */
+        .notification-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .detail-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .detail-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .detail-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .detail-action-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .detail-meta {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .detail-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .detail-tag {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .tag-fiscal {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .tag-laboral {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .tag-urgent {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .tag-client {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .detail-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            margin-bottom: 2rem;
+        }
+
+        .content-section h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .content-preview {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            line-height: 1.5;
+        }
+
+        .document-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .document-icon {
+            color: var(--secondary-color);
+            font-size: 2rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-name {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .document-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .document-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .comments-section {
+            margin-bottom: 2rem;
+        }
+
+        .comments-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .comment {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .comment-time {
+            color: #999;
+        }
+
+        .comment-content {
+            line-height: 1.5;
+        }
+
+        .new-comment {
+            margin-top: 1rem;
+        }
+
+        .new-comment textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            resize: vertical;
+            min-height: 80px;
+            font-size: 0.9rem;
+        }
+
+        /* Notification Footer Actions */
+        .notification-footer {
+            padding: 1.25rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            background-color: white;
+        }
+
+        .footer-action-btn {
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .footer-action-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .footer-action-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* User Selector */
+        .user-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-tag {
+            background-color: #f0f0f0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Notification Properties Modal */
+        .notification-properties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .property-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .property-group h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .property-label {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .property-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* Timeline Visualization */
+        .timeline-container {
+            position: relative;
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #eee;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -0.75rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+        }
+
+        .timeline-content {
+            background-color: #f9f9f9;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-description {
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .notifications-container {
+                flex-direction: column;
+            }
+
+            .notifications-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .notification-properties {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .notification-detail {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">Gestoría Galiano</div>
+        </div>
+        <div class="user-profile" onclick="toggleUserDropdown()">
+            <div class="user-avatar">AG</div>
+            <div>
+                <div style="font-size: 0.9rem;">Ana García</div>
+                <div style="font-size: 0.8rem; color: #ccc;">Asesora Fiscal</div>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Gestoría Galiano</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='gestoria_dashboard.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="menu-text">Dashboard</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_comunicacion.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="menu-text">Comunicación</div>
+                    <div class="notification-badge">3</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_tareas.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="menu-text">Tareas</div>
+                    <div class="notification-badge">8</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_documentos.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div class="menu-text">Documentos</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_correo.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="menu-text">Correo</div>
+                    <div class="notification-badge">12</div>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='gestoria_notificaciones.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">Notificaciones</div>
+                    <div class="notification-badge">5</div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Notifications Container -->
+            <div class="notifications-container">
+                <!-- Notifications Sidebar -->
+                <aside class="notifications-sidebar">
+                    <div class="sidebar-header">
+                        <h3 class="sidebar-title">Gestión de Notificaciones</h3>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action-btn primary" onclick="openNewNotificationModal()">
+                            <i class="fas fa-plus"></i>
+                            <span>Nueva Notificación</span>
+                        </button>
+                        <button class="quick-action-btn secondary">
+                            <i class="fas fa-filter"></i>
+                            <span>Filtros Avanzados</span>
+                        </button>
+                        <button class="quick-action-btn secondary">
+                            <i class="fas fa-file-export"></i>
+                            <span>Exportar</span>
+                        </button>
+                    </div>
+
+                    <div class="search-box">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Buscar notificaciones...">
+                        </div>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo</label>
+                            <select class="filter-select">
+                                <option>Todos</option>
+                                <option>DEHU</option>
+                                <option>AEAT</option>
+                                <option>Clientes</option>
+                                <option>Internas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Estado</label>
+                            <select class="filter-select">
+                                <option>Todos</option>
+                                <option>Pendientes</option>
+                                <option>Procesadas</option>
+                                <option>Archivadas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Prioridad</label>
+                            <select class="filter-select">
+                                <option>Todas</option>
+                                <option>Alta</option>
+                                <option>Media</option>
+                                <option>Baja</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Fecha</label>
+                            <select class="filter-select">
+                                <option>Todos</option>
+                                <option>Última semana</option>
+                                <option>Último mes</option>
+                                <option>Últimos 3 meses</option>
+                            </select>
+                        </div>
+
+                        <button class="quick-action-btn secondary" style="width: 100%; margin-top: 0.75rem;">
+                            <i class="fas fa-search"></i>
+                            <span>Aplicar Filtros</span>
+                        </button>
+                    </div>
+
+                    <div class="notification-stats">
+                        <h4 style="margin-bottom: 0.75rem; font-size: 1rem; color: var(--primary-color);">Estadísticas</h4>
+                        <div class="stat-item">
+                            <span class="stat-label">Notificaciones totales</span>
+                            <span class="stat-value">42</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Pendientes</span>
+                            <span class="stat-value">5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Procesadas</span>
+                            <span class="stat-value">32</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Archivadas</span>
+                            <span class="stat-value">18</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Urgentes</span>
+                            <span class="stat-value" style="color: var(--danger-color);">3</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-list">
+                        <div class="notification-item unread selected" onclick="loadNotification('dehu-2026-0412')">
+                            <div class="notification-header">
+                                <div class="notification-title">Notificación DEHU: Citación para 25/04/2026</div>
+                                <div class="notification-status status-urgent">Urgente</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#DEHU-2026-0412</span>
+                                <span>12/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Lucas Torres • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+
+                        <div class="notification-item unread" onclick="loadNotification('aeat-iva-update')">
+                            <div class="notification-header">
+                                <div class="notification-title">AEAT: Cambios normativa IVA 2026</div>
+                                <div class="notification-status status-pending">Pendiente</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#AEAT-2026-0410</span>
+                                <span>10/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-users"></i> Todos los clientes • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+
+                        <div class="notification-item" onclick="loadNotification('client-documents')">
+                            <div class="notification-header">
+                                <div class="notification-title">Documentación pendiente - Empresa XYZ</div>
+                                <div class="notification-status status-processed">Procesada</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#CLI-2026-0408</span>
+                                <span>08/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Empresa XYZ • <i class="fas fa-tag"></i> Contable
+                            </div>
+                        </div>
+
+                        <div class="notification-item" onclick="loadNotification('laboral-inspection')">
+                            <div class="notification-header">
+                                <div class="notification-title">Inspección laboral programada</div>
+                                <div class="notification-status status-processed">Procesada</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#LAB-2026-0405</span>
+                                <span>05/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Autónomo ABC • <i class="fas fa-tag"></i> Laboral
+                            </div>
+                        </div>
+
+                        <div class="notification-item" onclick="loadNotification('internal-meeting')">
+                            <div class="notification-header">
+                                <div class="notification-title">Reunión equipo fiscal - Cambios normativos</div>
+                                <div class="notification-status status-processed">Procesada</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#INT-2026-0401</span>
+                                <span>01/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-users"></i> Equipo Fiscal • <i class="fas fa-tag"></i> Interna
+                            </div>
+                        </div>
+
+                        <div class="notification-item" onclick="loadNotification('dehu-reminder')">
+                            <div class="notification-header">
+                                <div class="notification-title">Recordatorio: Presentación modelo 130</div>
+                                <div class="notification-status status-processed">Procesada</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#DEHU-2026-0328</span>
+                                <span>28/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Lucas Torres • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+
+                        <div class="notification-item" onclick="loadNotification('aeat-payment')">
+                            <div class="notification-header">
+                                <div class="notification-title">AEAT: Recordatorio de pago modelo 111</div>
+                                <div class="notification-status status-processed">Procesada</div>
+                            </div>
+                            <div class="notification-meta">
+                                <span>#AEAT-2026-0325</span>
+                                <span>25/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-users"></i> Todos los clientes • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Notification Detail -->
+                <div class="notification-detail">
+                    <div class="detail-header">
+                        <h3 class="detail-title">Notificación DEHU: Citación para 25/04/2026</h3>
+                        <div class="detail-actions">
+                            <button class="detail-action-btn" title="Marcar como leída" onclick="markAsRead()">
+                                <i class="fas fa-envelope-open"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Crear tarea" onclick="createTaskFromNotification()">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Asignar a alguien" onclick="openAssignModal()">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Archivar notificación" onclick="archiveNotification()">
+                                <i class="fas fa-archive"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Descargar PDF" onclick="downloadNotificationPDF()">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Más opciones">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="detail-meta">
+                        <div>
+                            <span style="margin-right: 1rem;"><strong>ID:</strong> #DEHU-2026-0412</span>
+                            <span style="margin-right: 1rem;"><strong>Fecha recepción:</strong> 12/04/2026</span>
+                            <span><strong>Plazo:</strong> 20/04/2026</span>
+                        </div>
+                        <div class="detail-tags">
+                            <span class="detail-tag tag-fiscal">Fiscal</span>
+                            <span class="detail-tag tag-urgent">Urgente</span>
+                            <span class="detail-tag tag-client">Cliente</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-content">
+                        <div class="content-section">
+                            <h4>Detalles de la Notificación</h4>
+                            <div class="content-preview">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div>
+                                        <p><strong>Remitente:</strong> Dirección Ejecutiva de Hacienda Única (DEHU)</p>
+                                        <p><strong>Destinatario:</strong> Lucas Torres (NIF: 12345678A)</p>
+                                        <p><strong>Asunto:</strong> Citación para comparecencia</p>
+                                        <p><strong>Referencia:</strong> Expediente 2026/4587</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="background-color: var(--danger-color); color: white; padding: 0.5rem; border-radius: var(--border-radius); font-weight: bold;">
+                                            PLAZO: 8 días
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <p>Por la presente se le cita a Ud. para comparecer en las dependencias de esta Dirección Ejecutiva de Hacienda Única, sita en Calle Mayor, 45, 28013 Madrid, el día <strong>25 de abril de 2026 a las 10:00 horas</strong>, con el objeto de:</p>
+
+                                    <ul style="margin: 1rem 0 1rem 2rem;">
+                                        <li>Aclarar determinados aspectos de su declaración del Impuesto sobre la Renta de las Personas Físicas correspondiente al ejercicio 2025.</li>
+                                        <li>Presentar la documentación justificativa de las deducciones aplicadas en el modelo 130 del primer trimestre de 2026.</li>
+                                        <li>Revisar el cumplimiento de sus obligaciones fiscales en relación con el IVA de operaciones intracomunitarias.</li>
+                                    </ul>
+
+                                    <p>Deberá Ud. personarse provisto de:</p>
+
+                                    <ol style="margin: 1rem 0 1rem 2rem;">
+                                        <li>Documento Nacional de Identidad o documento acreditativo de su identidad.</li>
+                                        <li>Documentación justificativa de las operaciones declaradas (facturas, contratos, justificantes de pago, etc.).</li>
+                                        <li>Libros registro de facturas emitidas y recibidas correspondientes al ejercicio 2025.</li>
+                                        <li>Cualquier otra documentación que considere relevante para la aclaración de los hechos objeto de esta citación.</li>
+                                    </ol>
+
+                                    <p>De conformidad con lo dispuesto en el artículo 105 de la Ley 58/2003, de 17 de diciembre, General Tributaria, la no comparecencia sin causa justificada podrá ser considerada como infracción tributaria.</p>
+
+                                    <p>Atentamente,<br>
+                                    <strong>El Director Ejecutivo<br>
+                                    Dirección Ejecutiva de Hacienda Única</strong></p>
+                                </div>
+
+                                <div style="border-top: 1px solid #eee; padding-top: 1rem; font-size: 0.8rem; color: #666;">
+                                    <p><strong>Nota:</strong> Esta notificación ha sido generada electrónicamente y tiene plena validez legal de conformidad con el artículo 27 de la Ley 39/2015, de 1 de octubre, del Procedimiento Administrativo Común de las Administraciones Públicas.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+                            <h4>Documentos Asociados</h4>
+                            <div class="document-preview">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-name">DEHU_2026_0412_Citacion_Lucas_Torres.pdf</div>
+                                    <div class="document-meta">Notificación oficial en formato PDF • 1.2 MB</div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="document-action-btn" title="Descargar" onclick="downloadDocument('DEHU_2026_0412_Citacion_Lucas_Torres.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="document-action-btn" title="Vista previa" onclick="previewDocument('DEHU_2026_0412_Citacion_Lucas_Torres.pdf')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="document-preview">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-name">Anexo_I_Documentacion_Requerida.pdf</div>
+                                    <div class="document-meta">Lista detallada de documentación requerida • 850 KB</div>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="document-action-btn" title="Descargar" onclick="downloadDocument('Anexo_I_Documentacion_Requerida.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="document-action-btn" title="Vista previa" onclick="previewDocument('Anexo_I_Documentacion_Requerida.pdf')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+                            <h4>Acciones Requeridas</h4>
+                            <div class="content-preview">
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones inmediatas:</h5>
+                                    <ol style="margin-left: 1.5rem;">
+                                        <li>Contactar con el cliente (Lucas Torres) para informarle de la citación y solicitar la documentación requerida.</li>
+                                        <li>Revisar el historial fiscal del cliente para identificar posibles discrepancias.</li>
+                                        <li>Preparar un borrador de respuesta con la documentación disponible.</li>
+                                        <li>Programar una reunión con el cliente para revisar la documentación antes de la citación.</li>
+                                    </ol>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Documentación a preparar:</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Declaraciones de IRPF de los últimos 3 ejercicios.</li>
+                                        <li>Libros registro de IVA del ejercicio 2025.</li>
+                                        <li>Justificantes de las deducciones aplicadas en el modelo 130 del primer trimestre de 2026.</li>
+                                        <li>Contratos y facturas de operaciones intracomunitarias.</li>
+                                        <li>Documentación justificativa de inversiones y amortizaciones.</li>
+                                    </ul>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Plazos críticos:</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li><strong>18/04/2026:</strong> Fecha límite para recopilar documentación del cliente.</li>
+                                        <li><strong>22/04/2026:</strong> Reunión de preparación con el cliente.</li>
+                                        <li><strong>24/04/2026:</strong> Envío de documentación a DEHU (si procede).</li>
+                                        <li><strong>25/04/2026 10:00:</strong> Comparecencia en DEHU.</li>
+                                    </ul>
+                                </div>
+
+                                <div style="background-color: #fff8e1; padding: 1rem; border-radius: var(--border-radius); border-left: 4px solid var(--warning-color);">
+                                    <h5 style="color: var(--danger-color); margin-bottom: 0.5rem;">
+                                        <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                                        Advertencia importante:
+                                    </h5>
+                                    <p>La no comparecencia sin justificación o la falta de presentación de la documentación requerida puede acarrear sanciones según el artículo 198 de la Ley General Tributaria.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+                            <h4>Historial de Acciones</h4>
+                            <div class="timeline-container">
+                                <div class="timeline-line"></div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-time">12/04/2026 09:30</div>
+                                        <div class="timeline-title">Notificación recibida</div>
+                                        <div class="timeline-description">
+                                            Notificación DEHU-2026-0412 recibida a través del buzón electrónico de la gestoría.
+                                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                <i class="fas fa-user" style="margin-right: 0.3rem;"></i> Sistema automático
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot" style="background-color: var(--success-color);"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-time">12/04/2026 09:45</div>
+                                        <div class="timeline-title">Notificación asignada</div>
+                                        <div class="timeline-description">
+                                            Asignada automáticamente a Ana García (Asesora Fiscal) por ser la gestora asignada al cliente Lucas Torres.
+                                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                <i class="fas fa-user" style="margin-right: 0.3rem;"></i> Ana García
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot" style="background-color: var(--accent-color);"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-time">12/04/2026 10:15</div>
+                                        <div class="timeline-title">Tarea creada</div>
+                                        <div class="timeline-description">
+                                            Tarea #FIS-2026-0413 creada: "Preparar documentación para citación DEHU - Lucas Torres"
+                                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                <i class="fas fa-tasks" style="margin-right: 0.3rem;"></i> Plazo: 18/04/2026
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot" style="background-color: var(--secondary-color);"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-time">12/04/2026 11:30</div>
+                                        <div class="timeline-title">Cliente notificado</div>
+                                        <div class="timeline-description">
+                                            Email enviado a Lucas Torres informando de la citación y solicitando documentación.
+                                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                <i class="fas fa-envelope" style="margin-right: 0.3rem;"></i> Email #2026-0412-001
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot" style="background-color: var(--success-color);"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-time">12/04/2026 12:00</div>
+                                        <div class="timeline-title">Documentos revisados</div>
+                                        <div class="timeline-description">
+                                            Revisión inicial de los documentos adjuntos a la notificación.
+                                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                <i class="fas fa-file-pdf" style="margin-right: 0.3rem;"></i> 2 documentos analizados
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comments-section">
+                            <h4>Comentarios y Seguimiento</h4>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="comment-author">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                            <strong>Ana García</strong>
+                                        </div>
+                                    </div>
+                                    <div class="comment-time">12/04/2026 12:15</div>
+                                </div>
+                                <div class="comment-content">
+                                    <p>He revisado la notificación y los documentos adjuntos. La citación es por posibles discrepancias en las deducciones aplicadas en el modelo 130 del primer trimestre.</p>
+                                    <p>Los puntos más críticos son:</p>
+                                    <ul>
+                                        <li>Deducción por inversión en equipo informático (puede estar mal justificada)</li>
+                                        <li>Operaciones intracomunitarias del último trimestre de 2025</li>
+                                        <li>Diferencias en el IVA soportado vs. declarado</li>
+                                    </ul>
+                                    <p>He contactado con Lucas para que nos envíe toda la documentación relevante antes del 18/04. También he programado una reunión con él para el 22/04 a las 10:00 en nuestra oficina para revisar todo antes de la citación.</p>
+                                    <div style="margin-top: 0.75rem; background-color: #f0f0f0; padding: 0.5rem; border-radius: 4px;">
+                                        <small>Tareas relacionadas: <a href="#" style="color: var(--secondary-color);">#FIS-2026-0413</a>, <a href="#" style="color: var(--secondary-color);">#FIS-2026-0414</a></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="comment-author">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">CM</div>
+                                            <strong>Carlos Martínez</strong>
+                                        </div>
+                                    </div>
+                                    <div class="comment-time">12/04/2026 14:30</div>
+                                </div>
+                                <div class="comment-content">
+                                    <p>Ana, he revisado el historial fiscal de Lucas Torres de los últimos 3 años y no veo nada que pueda justificar esta citación. Todos los modelos presentados están correctos y las deducciones aplicadas parecen estar bien documentadas en nuestros registros.</p>
+                                    <p>Lo que sí he encontrado es que en el último trimestre de 2025 hubo un error en el modelo 349 (operaciones intracomunitarias) que corregimos en la declaración complementaria de enero. Puede que ese sea el origen de la citación.</p>
+                                    <p>Te adjunto el informe de revisión con los detalles.</p>
+                                    <div style="margin-top: 0.75rem; background-color: #f0f0f0; padding: 0.5rem; border-radius: 4px;">
+                                        <small>Documento adjunto: <a href="#" style="color: var(--secondary-color);">informe_revision_lucas_torres.pdf</a></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="comment-author">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                            <strong>Ana García</strong>
+                                        </div>
+                                    </div>
+                                    <div class="comment-time">13/04/2026 09:15</div>
+                                </div>
+                                <div class="comment-content">
+                                    <p>Gracias Carlos por la revisión. Efectivamente, el error en el modelo 349 puede ser el detonante. He hablado con Lucas y me ha confirmado que recibirá la documentación solicitada antes del viernes 15/04.</p>
+                                    <p>Voy a preparar un borrador de respuesta para enviar a DEHU explicando el error y la corrección realizada, junto con la documentación justificativa. También incluiré el informe que me has pasado.</p>
+                                    <p>¿Podrías revisar el borrador cuando lo tenga listo? Sería ideal enviarlo a DEHU antes de la citación para intentar resolver el tema sin necesidad de comparecencia.</p>
+                                </div>
+                            </div>
+
+                            <div class="new-comment">
+                                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                    <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem; flex-shrink: 0;">AG</div>
+                                    <textarea class="form-input form-textarea" placeholder="Añadir un comentario o actualización..."></textarea>
+                                </div>
+                                <div style="margin-top: 0.75rem; display: flex; justify-content: flex-end;">
+                                    <button class="footer-action-btn footer-action-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">
+                                        <i class="fas fa-paper-plane"></i> Publicar Comentario
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification-footer">
+                        <button class="footer-action-btn footer-action-primary" onclick="markAsProcessed()">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Marcar como Procesada</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-primary" onclick="createTaskFromNotification()">
+                            <i class="fas fa-tasks"></i>
+                            <span>Crear Tarea</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="openAssignModal()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Reasignar</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="scheduleFollowup()">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Programar Seguimiento</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="archiveNotification()">
+                            <i class="fas fa-archive"></i>
+                            <span>Archivar</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="generateResponse()">
+                            <i class="fas fa-file-word"></i>
+                            <span>Generar Respuesta</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Notification Modal -->
+    <div class="modal-overlay" id="newNotificationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Registrar Nueva Notificación</h3>
+                <button class="modal-close" onclick="closeModal('newNotificationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationType">Tipo de notificación</label>
+                            <select id="notificationType" class="form-input form-select">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="dehu">DEHU</option>
+                                <option value="aeat">AEAT</option>
+                                <option value="ss">Seguridad Social</option>
+                                <option value="client">Cliente</option>
+                                <option value="internal">Interna</option>
+                                <option value="other">Otra</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationId">ID de notificación</label>
+                            <input type="text" id="notificationId" class="form-input" placeholder="Ej: DEHU-2026-0412">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="notificationTitle">Título</label>
+                    <input type="text" id="notificationTitle" class="form-input" placeholder="Breve descripción de la notificación">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationClient">Cliente</label>
+                            <select id="notificationClient" class="form-input form-select">
+                                <option value="">Seleccionar cliente</option>
+                                <option value="lucas-torres" selected>Lucas Torres</option>
+                                <option value="empresa-xyz">Empresa XYZ, S.L.</option>
+                                <option value="autonomo-abc">Autónomo ABC</option>
+                                <option value="empresa-123">Industrias 123, S.A.</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationCategory">Categoría</label>
+                            <select id="notificationCategory" class="form-input form-select">
+                                <option value="">Seleccionar categoría</option>
+                                <option value="fiscal" selected>Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="administrativa">Administrativa</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationDate">Fecha de recepción</label>
+                            <input type="date" id="notificationDate" class="form-input" value="2026-04-12">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationDeadline">Plazo</label>
+                            <input type="date" id="notificationDeadline" class="form-input" value="2026-04-20">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="notificationDescription">Descripción</label>
+                    <textarea id="notificationDescription" class="form-input form-textarea" placeholder="Descripción detallada de la notificación..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Documentos adjuntos</label>
+                    <div class="user-selector" onclick="document.getElementById('notificationAttachments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar archivos</span>
+                    </div>
+                    <input type="file" id="notificationAttachments" style="display: none;" multiple>
+                    <div id="notificationAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notificationUrgent" checked>
+                            <label for="notificationUrgent">Marcar como urgente</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notificationCreateTask">
+                            <label for="notificationCreateTask">Crear tarea automáticamente</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notificationNotifyClient">
+                            <label for="notificationNotifyClient">Notificar al cliente</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Asignar a</label>
+                    <div class="user-selector" onclick="openUserSelector('notification')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García (Yo)</span>
+                    </div>
+                    <div class="selected-users" id="notificationAssignedUsers">
+                        <!-- Los usuarios asignados aparecerán aquí -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('newNotificationModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createNotification()">Registrar Notificación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Notification Modal -->
+    <div class="modal-overlay" id="assignModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Reasignar Notificación</h3>
+                <button class="modal-close" onclick="closeModal('assignModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="assignUser">Seleccionar nuevo responsable</label>
+                    <div class="user-selector" onclick="openUserSelector('assign')">
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                        <span>Ana García (Actual)</span>
+                    </div>
+                    <div class="selected-users" id="assignSelectedUsers">
+                        <!-- El nuevo responsable aparecerá aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="assignMessage">Mensaje de notificación (opcional)</label>
+                    <textarea id="assignMessage" class="form-input form-textarea" placeholder="Explica brevemente el motivo de la reasignación..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="assignDeadline">Nuevo plazo (opcional)</label>
+                    <input type="date" id="assignDeadline" class="form-input" value="2026-04-20">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notificaciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="assignNotifyOld" checked>
+                            <label for="assignNotifyOld">Notificar al responsable actual</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="assignNotifyNew" checked>
+                            <label for="assignNotifyNew">Notificar al nuevo responsable</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="assignNotifyClient">
+                            <label for="assignNotifyClient">Notificar al cliente</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('assignModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="reassignNotification()">Reasignar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Creation Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Crear Tarea desde Notificación</h3>
+                <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Título de la tarea</label>
+                    <input type="text" id="taskTitle" class="form-input" value="Preparar documentación para citación DEHU - Lucas Torres">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Descripción</label>
+                    <textarea id="taskDescription" class="form-input form-textarea">Preparar toda la documentación requerida para la citación del 25/04/2026 en DEHU para el cliente Lucas Torres. Incluye:
+- Revisión de declaraciones de IRPF de los últimos 3 ejercicios
+- Libros registro de IVA del ejercicio 2025
+- Justificantes de deducciones aplicadas en modelo 130 Q1 2026
+- Contratos y facturas de operaciones intracomunitarias
+- Documentación justificativa de inversiones y amortizaciones
+
+Coordinar con el cliente para recopilar la documentación antes del 18/04/2026 y programar reunión de revisión para el 22/04/2026.</textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskAssigned">Asignar a</label>
+                            <div class="user-selector" onclick="openUserSelector('task')">
+                                <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">AG</div>
+                                <span>Ana García (Yo)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskPriority">Prioridad</label>
+                            <select id="taskPriority" class="form-input form-select">
+                                <option value="medium">Media</option>
+                                <option value="high" selected>Alta</option>
+                                <option value="low">Baja</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskDeadline">Fecha límite</label>
+                            <input type="date" id="taskDeadline" class="form-input" value="2026-04-18">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="taskEstimatedTime">Tiempo estimado</label>
+                            <input type="text" id="taskEstimatedTime" class="form-input" placeholder="Ej: 4 horas" value="4 horas">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Relacionar con</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="relateNotification" checked>
+                            <label for="relateNotification">Esta notificación (#DEHU-2026-0412)</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="relateClient">
+                            <label for="relateClient">Perfil del cliente (Lucas Torres)</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="relateDocuments">
+                            <label for="relateDocuments">Documentos del cliente</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notificaciones</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notifyAssigned" checked>
+                            <label for="notifyAssigned">Notificar al asignado por email</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notifyApp">
+                            <label for="notifyApp">Notificación en la aplicación</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('taskModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createTask()">Crear Tarea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Selector Modal -->
+    <div class="modal-overlay" id="userSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Seleccionar Usuario</h3>
+                <button class="modal-close" onclick="closeModal('userSelectorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="userSearch">Buscar usuario</label>
+                    <div class="search-container" style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #999;"></i>
+                        <input type="text" id="userSearch" class="form-input" placeholder="Nombre, email o departamento..." style="padding-left: 2.25rem;" oninput="filterUsers()">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; max-height: 300px; overflow-y: auto;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">AG</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Ana García</div>
+                            <div style="font-size: 0.8rem; color: #666;">Asesora Fiscal • ana@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">CM</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Carlos Martínez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Contabilidad • carlos@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">LG</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Laura Gómez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Asistente • laura@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">JR</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Javier Rodríguez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Laboral • javier@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">MS</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Marta Sánchez</div>
+                            <div style="font-size: 0.8rem; color: #666;">Administración • marta@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="selectUser(this)">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">PR</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Pablo Ruiz</div>
+                            <div style="font-size: 0.8rem; color: #666;">Gerente • pablo@gestoriagaliano.com</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <i class="fas fa-check-circle" style="color: var(--success-color); display: none;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 1rem;">
+                <button class="modal-btn modal-btn-primary" onclick="confirmUserSelection()">Seleccionar Usuario</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentUserContext = '';
+        let currentModalContext = '';
+
+        // Función para alternar el sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Función para alternar el dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const userDropdown = document.getElementById('userDropdown');
+
+            if (!userProfile.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Función para cargar una notificación
+        function loadNotification(notificationId) {
+            // Marcar como seleccionado
+            document.querySelectorAll('.notification-item').forEach(item => {
+                item.classList.remove('selected', 'unread');
+            });
+            event.currentTarget.classList.add('selected');
+
+            // Actualizar el contenido según la notificación
+            const notificationData = {
+                'dehu-2026-0412': {
+                    title: 'Notificación DEHU: Citación para 25/04/2026',
+                    id: '#DEHU-2026-0412',
+                    date: '12/04/2026',
+                    deadline: '20/04/2026',
+                    client: 'Lucas Torres',
+                    category: 'Fiscal',
+                    status: 'Urgente',
+                    description: `
+                        <div style="margin-bottom: 1rem;">
+                            <p>Por la presente se le cita a Ud. para comparecer en las dependencias de esta Dirección Ejecutiva de Hacienda Única, sita en Calle Mayor, 45, 28013 Madrid, el día <strong>25 de abril de 2026 a las 10:00 horas</strong>, con el objeto de:</p>
+
+                            <ul style="margin: 1rem 0 1rem 2rem;">
+                                <li>Aclarar determinados aspectos de su declaración del Impuesto sobre la Renta de las Personas Físicas correspondiente al ejercicio 2025.</li>
+                                <li>Presentar la documentación justificativa de las deducciones aplicadas en el modelo 130 del primer trimestre de 2026.</li>
+                                <li>Revisar el cumplimiento de sus obligaciones fiscales en relación con el IVA de operaciones intracomunitarias.</li>
+                            </ul>
+
+                            <p>Deberá Ud. personarse provisto de:</p>
+
+                            <ol style="margin: 1rem 0 1rem 2rem;">
+                                <li>Documento Nacional de Identidad o documento acreditativo de su identidad.</li>
+                                <li>Documentación justificativa de las operaciones declaradas (facturas, contratos, justificantes de pago, etc.).</li>
+                                <li>Libros registro de facturas emitidas y recibidas correspondientes al ejercicio 2025.</li>
+                                <li>Cualquier otra documentación que considere relevante para la aclaración de los hechos objeto de esta citación.</li>
+                            </ol>
+
+                            <p>De conformidad con lo dispuesto en el artículo 105 de la Ley 58/2003, de 17 de diciembre, General Tributaria, la no comparecencia sin causa justificada podrá ser considerada como infracción tributaria.</p>
+                        </div>
+                    `,
+                    documents: [
+                        { name: 'DEHU_2026_0412_Citacion_Lucas_Torres.pdf', size: '1.2 MB', description: 'Notificación oficial en formato PDF' },
+                        { name: 'Anexo_I_Documentacion_Requerida.pdf', size: '850 KB', description: 'Lista detallada de documentación requerida' }
+                    ],
+                    actions: `
+                        <div style="margin-bottom: 1rem;">
+                            <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones inmediatas:</h5>
+                            <ol style="margin-left: 1.5rem;">
+                                <li>Contactar con el cliente (Lucas Torres) para informarle de la citación y solicitar la documentación requerida.</li>
+                                <li>Revisar el historial fiscal del cliente para identificar posibles discrepancias.</li>
+                                <li>Preparar un borrador de respuesta con la documentación disponible.</li>
+                                <li>Programar una reunión con el cliente para revisar la documentación antes de la citación.</li>
+                            </ol>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Documentación a preparar:</h5>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Declaraciones de IRPF de los últimos 3 ejercicios.</li>
+                                <li>Libros registro de IVA del ejercicio 2025.</li>
+                                <li>Justificantes de las deducciones aplicadas en el modelo 130 del primer trimestre de 2026.</li>
+                                <li>Contratos y facturas de operaciones intracomunitarias.</li>
+                                <li>Documentación justificativa de inversiones y amortizaciones.</li>
+                            </ul>
+                        </div>
+                    `,
+                    timeline: [
+                        { time: '12/04/2026 09:30', title: 'Notificación recibida', description: 'Notificación DEHU-2026-0412 recibida a través del buzón electrónico de la gestoría.', user: 'Sistema automático' },
+                        { time: '12/04/2026 09:45', title: 'Notificación asignada', description: 'Asignada automáticamente a Ana García (Asesora Fiscal) por ser la gestora asignada al cliente Lucas Torres.', user: 'Ana García' },
+                        { time: '12/04/2026 10:15', title: 'Tarea creada', description: 'Tarea #FIS-2026-0413 creada: "Preparar documentación para citación DEHU - Lucas Torres"', user: 'Ana García' },
+                        { time: '12/04/2026 11:30', title: 'Cliente notificado', description: 'Email enviado a Lucas Torres informando de la citación y solicitando documentación.', user: 'Ana García' },
+                        { time: '12/04/2026 12:00', title: 'Documentos revisados', description: 'Revisión inicial de los documentos adjuntos a la notificación.', user: 'Ana García' }
+                    ],
+                    comments: [
+                        {
+                            author: 'Ana García',
+                            time: '12/04/2026 12:15',
+                            content: `
+                                <p>He revisado la notificación y los documentos adjuntos. La citación es por posibles discrepancias en las deducciones aplicadas en el modelo 130 del primer trimestre.</p>
+                                <p>Los puntos más críticos son:</p>
+                                <ul>
+                                    <li>Deducción por inversión en equipo informático (puede estar mal justificada)</li>
+                                    <li>Operaciones intracomunitarias del último trimestre de 2025</li>
+                                    <li>Diferencias en el IVA soportado vs. declarado</li>
+                                </ul>
+                                <p>He contactado con Lucas para que nos envíe toda la documentación relevante antes del 18/04. También he programado una reunión con él para el 22/04 a las 10:00 en nuestra oficina para revisar todo antes de la citación.</p>
+                            `
+                        },
+                        {
+                            author: 'Carlos Martínez',
+                            time: '12/04/2026 14:30',
+                            content: `
+                                <p>Ana, he revisado el historial fiscal de Lucas Torres de los últimos 3 años y no veo nada que pueda justificar esta citación. Todos los modelos presentados están correctos y las deducciones aplicadas parecen estar bien documentadas en nuestros registros.</p>
+                                <p>Lo que sí he encontrado es que en el último trimestre de 2025 hubo un error en el modelo 349 (operaciones intracomunitarias) que corregimos en la declaración complementaria de enero. Puede que ese sea el origen de la citación.</p>
+                                <p>Te adjunto el informe de revisión con los detalles.</p>
+                            `
+                        },
+                        {
+                            author: 'Ana García',
+                            time: '13/04/2026 09:15',
+                            content: `
+                                <p>Gracias Carlos por la revisión. Efectivamente, el error en el modelo 349 puede ser el detonante. He hablado con Lucas y me ha confirmado que recibirá la documentación solicitada antes del viernes 15/04.</p>
+                                <p>Voy a preparar un borrador de respuesta para enviar a DEHU explicando el error y la corrección realizada, junto con la documentación justificativa. También incluiré el informe que me has pasado.</p>
+                                <p>¿Podrías revisar el borrador cuando lo tenga listo? Sería ideal enviarlo a DEHU antes de la citación para intentar resolver el tema sin necesidad de comparecencia.</p>
+                            `
+                        }
+                    ]
+                },
+                'aeat-iva-update': {
+                    title: 'AEAT: Cambios normativa IVA 2026',
+                    id: '#AEAT-2026-0410',
+                    date: '10/04/2026',
+                    deadline: '30/04/2026',
+                    client: 'Todos los clientes',
+                    category: 'Fiscal',
+                    status: 'Pendiente',
+                    description: `
+                        <p>Estimados/as señores/as,</p>
+                        <p>Por la presente les comunicamos importantes cambios en la normativa del Impuesto sobre el Valor Añadido (IVA) que entrarán en vigor a partir del 1 de julio de 2026.</p>
+
+                        <h4>Principales cambios:</h4>
+                        <ol>
+                            <li><strong>Nuevos tipos impositivos:</strong> Se introduce un nuevo tipo reducido del 5% para productos de primera necesidad ampliados.</li>
+                            <li><strong>Modificación en la declaración trimestral:</strong> El modelo 303 incluirá nuevos apartados para declarar operaciones intracomunitarias con mayor detalle.</li>
+                            <li><strong>Plazos de presentación:</strong> Se adelanta el plazo de presentación del modelo 390 (resumen anual) al 20 de enero (antes 30 de enero).</li>
+                            <li><strong>Facturación electrónica:</strong> Obligatoriedad para todas las empresas con facturación superior a 8 millones de euros anuales.</li>
+                        </ol>
+
+                        <p>Adjuntamos el documento oficial con el detalle completo de los cambios.</p>
+                    `,
+                    documents: [
+                        { name: 'BOE-A-2026-1234.pdf', size: '1.8 MB', description: 'Documento oficial con los cambios en la normativa de IVA' }
+                    ],
+                    actions: `
+                        <div style="margin-bottom: 1rem;">
+                            <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones requeridas:</h5>
+                            <ol style="margin-left: 1.5rem;">
+                                <li>Revisar el documento adjunto con los cambios detallados.</li>
+                                <li>Identificar clientes afectados por cada cambio.</li>
+                                <li>Preparar comunicación personalizada para cada grupo de clientes.</li>
+                                <li>Actualizar sistemas y plantillas de declaración.</li>
+                                <li>Programar sesiones de formación interna.</li>
+                            </ol>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Plazos críticos:</h5>
+                            <ul style="margin-left: 1.5rem;">
+                                <li><strong>15/04/2026:</strong> Revisión inicial de cambios y identificación de clientes afectados.</li>
+                                <li><strong>20/04/2026:</strong> Comunicación a clientes sobre cambios relevantes.</li>
+                                <li><strong>30/04/2026:</strong> Actualización de sistemas y plantillas.</li>
+                                <li><strong>15/05/2026:</strong> Sesiones de formación interna completadas.</li>
+                                <li><strong>01/07/2026:</strong> Entrada en vigor de los cambios.</li>
+                            </ul>
+                        </div>
+                    `,
+                    timeline: [
+                        { time: '10/04/2026 09:30', title: 'Notificación recibida', description: 'Notificación AEAT-2026-0410 recibida a través del buzón electrónico de la gestoría.', user: 'Sistema automático' },
+                        { time: '10/04/2026 10:00', title: 'Notificación asignada', description: 'Asignada automáticamente a todo el equipo fiscal.', user: 'Sistema automático' },
+                        { time: '10/04/2026 11:15', title: 'Reunión programada', description: 'Reunión de equipo fiscal programada para el 11/04 a las 10:00 para analizar cambios.', user: 'Ana García' }
+                    ],
+                    comments: [
+                        {
+                            author: 'Ana García',
+                            time: '10/04/2026 11:30',
+                            content: `
+                                <p>He revisado rápidamente los cambios y son significativos. Los puntos más críticos son:</p>
+                                <ol>
+                                    <li>El nuevo tipo reducido del 5% afectará a muchos de nuestros clientes del sector alimentación.</li>
+                                    <li>Los cambios en el modelo 303 requerirán actualizar nuestros sistemas de declaración.</li>
+                                    <li>El adelanto del plazo del modelo 390 puede causar problemas si no nos organizamos.</li>
+                                </ol>
+                                <p>He programado una reunión para mañana a las 10:00 con todo el equipo fiscal para analizar en detalle los cambios y asignar responsabilidades.</p>
+                            `
+                        }
+                    ]
+                }
+            };
+
+            const data = notificationData[notificationId] || notificationData['dehu-2026-0412'];
+
+            // Actualizar el título y contenido
+            document.querySelector('.detail-title').textContent = data.title;
+            document.querySelector('.detail-meta div:first-child span:first-child').textContent = `ID: ${data.id}`;
+            document.querySelector('.detail-meta div:first-child span:nth-child(2)').textContent = `Fecha recepción: ${data.date}`;
+            document.querySelector('.detail-meta div:first-child span:last-child').textContent = `Plazo: ${data.deadline}`;
+
+            // Actualizar tags
+            const tagsContainer = document.querySelector('.detail-tags');
+            tagsContainer.innerHTML = '';
+            tagsContainer.innerHTML = `
+                <span class="detail-tag tag-fiscal">${data.category}</span>
+                <span class="detail-tag tag-urgent">${data.status}</span>
+                <span class="detail-tag tag-client">Cliente</span>
+            `;
+
+            // Actualizar descripción
+            document.querySelector('.content-preview').innerHTML = data.description;
+
+            // Actualizar documentos
+            const documentsContainer = document.querySelector('.content-section:nth-child(3) .content-preview');
+            documentsContainer.innerHTML = '';
+
+            data.documents.forEach(doc => {
+                const docElement = document.createElement('div');
+                docElement.className = 'document-preview';
+                docElement.innerHTML = `
+                    <div class="document-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="document-info">
+                        <div class="document-name">${doc.name}</div>
+                        <div class="document-meta">${doc.description} • ${doc.size}</div>
+                    </div>
+                    <div class="document-actions">
+                        <button class="document-action-btn" title="Descargar" onclick="downloadDocument('${doc.name}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="document-action-btn" title="Vista previa" onclick="previewDocument('${doc.name}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                `;
+                documentsContainer.appendChild(docElement);
+            });
+
+            // Actualizar acciones
+            document.querySelector('.content-section:nth-child(4) .content-preview').innerHTML = data.actions;
+
+            // Actualizar timeline
+            const timelineContainer = document.querySelector('.timeline-container');
+            timelineContainer.innerHTML = '<div class="timeline-line"></div>';
+
+            data.timeline.forEach(item => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">${item.time}</div>
+                        <div class="timeline-title">${item.title}</div>
+                        <div class="timeline-description">
+                            ${item.description}
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                <i class="fas fa-user" style="margin-right: 0.3rem;"></i> ${item.user}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(timelineItem);
+            });
+
+            // Actualizar comentarios
+            const commentsContainer = document.querySelector('.comments-section');
+            const newComment = commentsContainer.querySelector('.new-comment');
+            commentsContainer.innerHTML = '<h4>Comentarios y Seguimiento</h4>';
+            commentsContainer.appendChild(newComment);
+
+            data.comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">${comment.author.split(' ').map(n => n[0]).join('').substring(0, 2)}</div>
+                                <strong>${comment.author}</strong>
+                            </div>
+                        </div>
+                        <div class="comment-time">${comment.time}</div>
+                    </div>
+                    <div class="comment-content">
+                        ${comment.content}
+                    </div>
+                `;
+                commentsContainer.insertBefore(commentElement, newComment);
+            });
+        }
+
+        // Función para marcar como leída
+        function markAsRead() {
+            document.querySelector('.notification-item.selected').classList.remove('unread');
+            alert('Notificación marcada como leída');
+        }
+
+        // Función para marcar como procesada
+        function markAsProcessed() {
+            if (confirm('¿Estás seguro de que quieres marcar esta notificación como procesada?')) {
+                document.querySelector('.notification-status.status-urgent').textContent = 'Procesada';
+                document.querySelector('.notification-status.status-urgent').classList.remove('status-urgent');
+                document.querySelector('.notification-status.status-urgent').classList.add('status-processed');
+                alert('Notificación marcada como procesada');
+            }
+        }
+
+        // Función para abrir modal de nueva notificación
+        function openNewNotificationModal() {
+            currentModalContext = 'notification';
+            document.getElementById('newNotificationModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de asignación
+        function openAssignModal() {
+            currentModalContext = 'assign';
+            document.getElementById('assignModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de tarea
+        function createTaskFromNotification() {
+            document.getElementById('taskModal').style.display = 'flex';
+        }
+
+        // Función para abrir selector de usuarios
+        function openUserSelector(context) {
+            currentUserContext = context;
+            document.getElementById('userSelectorModal').style.display = 'flex';
+            document.getElementById('userSearch').value = '';
+            filterUsers();
+        }
+
+        // Función para seleccionar usuario
+        function selectUser(element) {
+            // Remover selección anterior
+            document.querySelectorAll('#userSelectorModal .fa-check-circle').forEach(icon => {
+                icon.style.display = 'none';
+            });
+
+            // Marcar como seleccionado
+            element.querySelector('.fa-check-circle').style.display = 'block';
+        }
+
+        // Función para confirmar selección de usuario
+        function confirmUserSelection() {
+            const selectedUser = document.querySelector('#userSelectorModal .fa-check-circle[style="display: block;"]');
+
+            if (selectedUser) {
+                const userElement = selectedUser.closest('div[style*="cursor: pointer;"]');
+                const userName = userElement.querySelector('div[style*="font-weight: 500"]').textContent;
+                const userInitials = userElement.querySelector('.user-avatar').textContent;
+
+                if (currentUserContext === 'notification') {
+                    // Para notificación
+                    document.getElementById('notificationAssignedUsers').innerHTML = `
+                        <div class="user-tag">
+                            <div class="user-avatar" style="width: 1.5rem; height: 1.5rem; font-size: 0.7rem;">${userInitials}</div>
+                            ${userName}
+                            <button style="background: none; border: none; color: #666; cursor: pointer; margin-left: 0.5rem;" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                } else if (currentUserContext === 'assign') {
+                    // Para reasignación
+                    document.getElementById('assignSelectedUsers').innerHTML = `
+                        <div class="user-tag">
+                            <div class="user-avatar" style="width: 1.5rem; height: 1.5rem; font-size: 0.7rem;">${userInitials}</div>
+                            ${userName}
+                            <button style="background: none; border: none; color: #666; cursor: pointer; margin-left: 0.5rem;" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                } else if (currentUserContext === 'task') {
+                    // Para tarea
+                    document.querySelector('#taskModal .user-selector').innerHTML = `
+                        <div class="user-avatar" style="width: 1.75rem; height: 1.75rem; font-size: 0.7rem;">${userInitials}</div>
+                        <span>${userName}</span>
+                    `;
+                }
+
+                closeModal('userSelectorModal');
+            }
+        }
+
+        // Función para filtrar usuarios
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const userItems = document.querySelectorAll('#userSelectorModal div[style*="cursor: pointer;"]');
+
+            userItems.forEach(item => {
+                const name = item.querySelector('div[style*="font-weight: 500"]').textContent.toLowerCase();
+                const email = item.querySelector('div[style*="color: #666"]').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else{
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Función para crear notificación
+        function createNotification() {
+            const type = document.getElementById('notificationType').value;
+            const id = document.getElementById('notificationId').value.trim();
+            const title = document.getElementById('notificationTitle').value.trim();
+            const client = document.getElementById('notificationClient').value;
+            const category = document.getElementById('notificationCategory').value;
+            const date = document.getElementById('notificationDate').value;
+            const deadline = document.getElementById('notificationDeadline').value;
+            const description = document.getElementById('notificationDescription').value.trim();
+            const assigned = document.querySelector('#notificationAssignedUsers .user-tag');
+
+            if (!type) {
+                alert('Por favor, selecciona un tipo de notificación');
+                return;
+            }
+
+            if (!id) {
+                alert('Por favor, introduce un ID para la notificación');
+                return;
+            }
+
+            if (!title) {
+                alert('Por favor, introduce un título para la notificación');
+                return;
+            }
+
+            if (!client) {
+                alert('Por favor, selecciona un cliente');
+                return;
+            }
+
+            if (!category) {
+                alert('Por favor, selecciona una categoría');
+                return;
+            }
+
+            if (!date) {
+                alert('Por favor, selecciona una fecha de recepción');
+                return;
+            }
+
+            if (!deadline) {
+                alert('Por favor, selecciona un plazo');
+                return;
+            }
+
+            if (!description) {
+                alert('Por favor, introduce una descripción para la notificación');
+                return;
+            }
+
+            if (!assigned) {
+                alert('Por favor, selecciona un responsable');
+                return;
+            }
+
+            alert(`Notificación "${title}" (${id}) creada con éxito y asignada a ${assigned.textContent.trim()}`);
+            closeModal('newNotificationModal');
+        }
+
+        // Función para reasignar notificación
+        function reassignNotification() {
+            const newAssigned = document.querySelector('#assignSelectedUsers .user-tag');
+            const message = document.getElementById('assignMessage').value.trim();
+            const deadline = document.getElementById('assignDeadline').value;
+
+            if (!newAssigned) {
+                alert('Por favor, selecciona un nuevo responsable');
+                return;
+            }
+
+            alert(`Notificación reasignada a ${newAssigned.textContent.trim()} con éxito`);
+            closeModal('assignModal');
+        }
+
+        // Función para crear tarea
+        function createTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const assigned = document.querySelector('#taskModal .user-selector .user-avatar');
+            const priority = document.getElementById('taskPriority').value;
+            const deadline = document.getElementById('taskDeadline').value;
+
+            if (!title) {
+                alert('Por favor, introduce un título para la tarea');
+                return;
+            }
+
+            if (!assigned) {
+                alert('Por favor, selecciona un responsable para la tarea');
+                return;
+            }
+
+            alert(`Tarea "${title}" creada con éxito`);
+            closeModal('taskModal');
+        }
+
+        // Función para archivar notificación
+        function archiveNotification() {
+            if (confirm('¿Estás seguro de que quieres archivar esta notificación?')) {
+                alert('Notificación archivada con éxito');
+                document.querySelector('.notification-status').textContent = 'Archivada';
+                document.querySelector('.notification-status').classList.remove('status-urgent', 'status-pending');
+                document.querySelector('.notification-status').classList.add('status-processed');
+            }
+        }
+
+        // Función para programar seguimiento
+        function scheduleFollowup() {
+            const days = prompt('¿Cuántos días para el recordatorio de seguimiento? (1-30)', '7');
+            if (days && !isNaN(days) && days > 0 && days <= 30) {
+                alert(`Recordatorio de seguimiento programado para dentro de ${days} días`);
+            } else {
+                alert('Por favor, introduce un número válido de días (1-30).');
+            }
+        }
+
+        // Función para generar respuesta
+        function generateResponse() {
+            alert('Documento de respuesta generado con éxito. Puedes descargarlo desde la sección de documentos.');
+        }
+
+        // Función para descargar documento
+        function downloadDocument(filename) {
+            alert(`Descargando documento: ${filename}`);
+        }
+
+        // Función para ver vista previa de documento
+        function previewDocument(filename) {
+            alert(`Mostrando vista previa de: ${filename}`);
+        }
+
+        // Función para manejar la selección de archivos en notificaciones
+        document.getElementById('notificationAttachments').addEventListener('change', function(e) {
+            const selectedFiles = document.getElementById('notificationAttachedFiles');
+            selectedFiles.innerHTML = '';
+
+            for (const file of e.target.files) {
+                const fileItem = document.createElement('div');
+                fileItem.style.display = 'flex';
+                fileItem.style.alignItems = 'center';
+                fileItem.style.gap = '0.75rem';
+                fileItem.style.padding = '0.5rem';
+                fileItem.style.backgroundColor = '#f9f9f9';
+                fileItem.style.borderRadius = '4px';
+                fileItem.style.marginBottom = '0.5rem';
+
+                const fileSize = (file.size / 1024).toFixed(file.size < 1024000 ? 2 : 1);
+                const fileSizeUnit = file.size < 1024000 ? 'KB' : 'MB';
+
+                fileItem.innerHTML = `
+                    <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                        ${getFileIcon(file.name)}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: var(--primary-color);">${file.name}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${fileSize} ${fileSizeUnit}</div>
+                    </div>
+                    <button style="background: none; border: none; color: #666; cursor: pointer;" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                selectedFiles.appendChild(fileItem);
+            }
+        });
+
+        // Función para obtener icono de archivo
+        function getFileIcon(filename) {
+            if (filename.endsWith('.pdf')) return '<i class="fas fa-file-pdf"></i>';
+            if (filename.endsWith('.doc') || filename.endsWith('.docx')) return '<i class="fas fa-file-word"></i>';
+            if (filename.endsWith('.xls') || filename.endsWith('.xlsx')) return '<i class="fas fa-file-excel"></i>';
+            if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) return '<i class="fas fa-file-image"></i>';
+            if (filename.endsWith('.zip') || filename.endsWith('.rar')) return '<i class="fas fa-file-archive"></i>';
+            return '<i class="fas fa-file-alt"></i>';
+        }
+
+        // Función para abrir modal
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Función para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal-overlay[style="display: flex;"]');
+                openModals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar el selector de "Notificar al cliente"
+            document.getElementById('notificationNotifyClient').addEventListener('change', function() {
+                // Lógica adicional si es necesario
+            });
+
+            // Configurar el selector de fecha de caducidad en reasignación
+            document.getElementById('assignSetExpiry').addEventListener('change', function() {
+                document.getElementById('assignExpiryDate').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Cargar la primera notificación por defecto
+            loadNotification('dehu-2026-0412');
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

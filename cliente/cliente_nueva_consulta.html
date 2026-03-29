@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Consulta | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+
+        .form-title h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .form-title p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+            padding-right: 30px;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-label {
+            display: block;
+            background-color: var(--light-color);
+            color: var(--primary-color);
+            padding: 12px;
+            border: 1px dashed #ccc;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-label:hover {
+            background-color: #e0e0e0;
+            border-color: var(--secondary-color);
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-list {
+            margin-top: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-actions button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #b8952d;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .chat-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .chat-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .chat-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='cliente_home.html'">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="logo" style="font-size: 20px; font-weight: bold; color: var(--secondary-color);">Gestoría Galiano</div>
+        <div></div>
+    </div>
+
+    <div class="container">
+        <div class="form-card">
+            <div class="form-title">
+                <h2>Nueva Consulta</h2>
+                <p>Envía tu consulta a tu gestor asignado</p>
+            </div>
+
+            <form>
+                <div class="form-group">
+                    <label for="consulta-tipo">Tipo de consulta</label>
+                    <select id="consulta-tipo" class="form-control" required>
+                        <option value="">Selecciona el tipo de consulta</option>
+                        <option value="laboral">Laboral</option>
+                        <option value="fiscal">Fiscal/Contable</option>
+                        <option value="impuestos">Impuestos</option>
+                        <option value="facturas">Envío de Facturas</option>
+                        <option value="varios">Otros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="consulta-mensaje">Detalles de tu consulta</label>
+                    <textarea id="consulta-mensaje" class="form-control" placeholder="Explica detalladamente tu consulta para que podamos ayudarte mejor..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Documentos adjuntos (opcional)</label>
+                    <div class="file-upload">
+                        <label for="consulta-archivos" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i><br>
+                            Arrastra archivos aquí o haz clic para seleccionar<br>
+                            <small>Formatos permitidos: PDF, JPG, PNG, DOC, XLS (máx. 10MB por archivo)</small>
+                        </label>
+                        <input type="file" id="consulta-archivos" multiple>
+                    </div>
+                    <div class="file-list" id="file-list">
+                        <!-- Los archivos seleccionados aparecerán aquí -->
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Enviar Consulta
+                </button>
+            </form>
+
+            <div class="chat-link">
+                ¿Prefieres hablar directamente con un gestor?
+                <a href="cliente_chat.html">Abrir chat en vivo →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Manejar la selección de archivos
+        document.getElementById('consulta-archivos').addEventListener('change', function(e) {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+
+            for (const file of e.target.files) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+
+                const fileSize = (file.size / 1024).toFixed(2);
+                const fileSizeUnit = fileSize < 1024 ? 'KB' : 'MB';
+
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file-alt"></i>
+                        <span>${file.name}</span>
+                        <small>${fileSize} ${fileSizeUnit}</small>
+                    </div>
+                    <div class="file-actions">
+                        <button onclick="removeFile(this, '${file.name}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+
+                fileList.appendChild(fileItem);
+            }
+        });
+
+        // Función para eliminar un archivo de la lista
+        function removeFile(button, fileName) {
+            const fileInput = document.getElementById('consulta-archivos');
+            const dataTransfer = new DataTransfer();
+            const files = fileInput.files;
+
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].name !== fileName) {
+                    dataTransfer.items.add(files[i]);
+                }
+            }
+
+            fileInput.files = dataTransfer.files;
+            button.closest('.file-item').remove();
+        }
+
+        // Validación del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const tipo = document.getElementById('consulta-tipo').value;
+            const mensaje = document.getElementById('consulta-mensaje').value.trim();
+
+            if (!tipo) {
+                alert('Por favor, selecciona un tipo de consulta');
+                return;
+            }
+
+            if (!mensaje) {
+                alert('Por favor, escribe los detalles de tu consulta');
+                return;
+            }
+
+            // Simular envío exitoso
+            alert('Consulta enviada con éxito. Tu gestor responderá pronto.');
+            window.location.href = 'cliente_home.html';
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

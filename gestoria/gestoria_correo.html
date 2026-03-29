@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Correo | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 0.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-item .menu-text {
+            display: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .menu-icon {
+            font-size: 1.1rem;
+        }
+
+        .menu-text {
+            font-size: 0.9rem;
+        }
+
+        .notification-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Email Management Container */
+        .email-management {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Email Sidebar */
+        .email-sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .compose-btn {
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .compose-btn:hover {
+            background-color: #b8952d;
+        }
+
+        .search-box {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .email-folders {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .folder-section {
+            margin-bottom: 1rem;
+        }
+
+        .folder-section-title {
+            padding: 0.5rem 1.25rem 0.25rem 1.25rem;
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .folder-item {
+            padding: 0.6rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .folder-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .folder-item.active {
+            background-color: #e8f4f8;
+            font-weight: 500;
+        }
+
+        .folder-icon {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .folder-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .folder-count {
+            background-color: #f0f0f0;
+            color: #666;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .folder-item.unread .folder-count {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Email List */
+        .email-list {
+            width: 350px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .list-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .list-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.2rem;
+        }
+
+        .email-filters {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border-color: var(--secondary-color);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+
+        .email-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .email-item {
+            padding: 0.8rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .email-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .email-item.unread {
+            background-color: #e8f4f8;
+            font-weight: 500;
+        }
+
+        .email-item.selected {
+            background-color: #e0e8f0;
+        }
+
+        .email-checkbox {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .email-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .email-sender {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .email-sender-name {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-subject {
+            font-size: 0.85rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-date {
+            font-size: 0.8rem;
+            color: #999;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .email-attachment {
+            color: #999;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Email View */
+        .email-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .email-view-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .email-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .email-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .email-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .email-sender-info h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .email-sender-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .email-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .email-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .email-action-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .email-meta {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .email-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .email-tag {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .tag-fiscal {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .tag-urgent {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .tag-client {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .email-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .email-subject {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .email-body {
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .email-attachments {
+            margin-bottom: 2rem;
+        }
+
+        .attachments-title {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+        }
+
+        .attachment-icon {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .attachment-info {
+            flex: 1;
+        }
+
+        .attachment-name {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .attachment-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .attachment-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .attachment-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .email-reply {
+            padding: 1.25rem;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+
+        .reply-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .reply-option {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .reply-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .reply-option.active {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border-color: var(--secondary-color);
+        }
+
+        .reply-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .reply-to {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .reply-input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            resize: vertical;
+            min-height: 120px;
+            font-size: 0.9rem;
+        }
+
+        .reply-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .reply-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .reply-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .reply-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* User Selector */
+        .user-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-tag {
+            background-color: #f0f0f0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .email-management {
+                flex-direction: column;
+            }
+
+            .email-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .email-list {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .email-view {
+                padding: 0.75rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+
+            .email-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">Gestoría Galiano</div>
+        </div>
+        <div class="user-profile" onclick="toggleUserDropdown()">
+            <div class="user-avatar">AG</div>
+            <div>
+                <div style="font-size: 0.9rem;">Ana García</div>
+                <div style="font-size: 0.8rem; color: #ccc;">Asesora Fiscal</div>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Gestoría Galiano</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='gestoria_dashboard.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="menu-text">Dashboard</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_comunicacion.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="menu-text">Comunicación</div>
+                    <div class="notification-badge">3</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_tareas.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="menu-text">Tareas</div>
+                    <div class="notification-badge">8</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_documentos.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div class="menu-text">Documentos</div>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='gestoria_correo.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="menu-text">Correo</div>
+                    <div class="notification-badge">12</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_notificaciones.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">Notificaciones</div>
+                    <div class="notification-badge">5</div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Email Management -->
+            <div class="email-management">
+                <!-- Email Sidebar -->
+                <aside class="email-sidebar">
+                    <div class="sidebar-header">
+                        <button class="compose-btn" onclick="openComposeModal()">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Redactar</span>
+                        </button>
+                    </div>
+
+                    <div class="search-box">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Buscar en el correo...">
+                        </div>
+                    </div>
+
+                    <div class="email-folders">
+                        <div class="folder-section">
+                            <div class="folder-section-title">CARPETAS PRINCIPALES</div>
+                            <div class="folder-item active" onclick="loadFolder('inbox')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <div class="folder-name">Bandeja de entrada</div>
+                                <div class="folder-count unread">12</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('sent')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <div class="folder-name">Enviados</div>
+                                <div class="folder-count">8</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('drafts')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="folder-name">Borradores</div>
+                                <div class="folder-count">3</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('spam')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="folder-name">Spam</div>
+                                <div class="folder-count">5</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('trash')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <div class="folder-name">Papelera</div>
+                                <div class="folder-count">7</div>
+                            </div>
+                        </div>
+
+                        <div class="folder-section">
+                            <div class="folder-section-title">ETIQUETAS</div>
+                            <div class="folder-item" onclick="loadFolder('fiscal')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-tag" style="color: var(--secondary-color);"></i>
+                                </div>
+                                <div class="folder-name">Fiscal</div>
+                                <div class="folder-count">4</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('laboral')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-tag" style="color: #3498db;"></i>
+                                </div>
+                                <div class="folder-name">Laboral</div>
+                                <div class="folder-count">2</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('contable')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-tag" style="color: #9b59b6;"></i>
+                                </div>
+                                <div class="folder-name">Contable</div>
+                                <div class="folder-count">3</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('urgente')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-tag" style="color: var(--danger-color);"></i>
+                                </div>
+                                <div class="folder-name">Urgente</div>
+                                <div class="folder-count unread">2</div>
+                            </div>
+                        </div>
+
+                        <div class="folder-section">
+                            <div class="folder-section-title">FILTROS RÁPIDOS</div>
+                            <div class="folder-item" onclick="loadFolder('unread')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="folder-name">No leídos</div>
+                                <div class="folder-count unread">8</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('starred')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="folder-name">Destacados</div>
+                                <div class="folder-count">1</div>
+                            </div>
+                            <div class="folder-item" onclick="loadFolder('attachments')">
+                                <div class="folder-icon">
+                                    <i class="fas fa-paperclip"></i>
+                                </div>
+                                <div class="folder-name">Con adjuntos</div>
+                                <div class="folder-count">5</div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Email List -->
+                <div class="email-list">
+                    <div class="list-header">
+                        <h3 class="list-title">Bandeja de entrada</h3>
+                        <div class="list-actions">
+                            <button class="list-action-btn" title="Actualizar">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="list-action-btn" title="Configuración">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="email-filters">
+                        <button class="filter-btn active">Todos</button>
+                        <button class="filter-btn">No leídos</button>
+                        <button class="filter-btn">Destacados</button>
+                        <button class="filter-btn">Con adjuntos</button>
+                        <button class="filter-btn">Fiscal</button>
+                        <button class="filter-btn">Laboral</button>
+                    </div>
+
+                    <div class="email-items">
+                        <div class="email-item unread selected" onclick="loadEmail('aeat-notification')">
+                            <div class="email-checkbox">
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="email-status">AE</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Agencia Tributaria <notificaciones@aeat.es></div>
+                                <div class="email-subject">Notificación importante: Cambios en la normativa de IVA para 2026</div>
+                            </div>
+                            <div class="email-date">10:45</div>
+                            <div class="email-attachment">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                        </div>
+
+                        <div class="email-item unread" onclick="loadEmail('client-followup')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">LT</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Lucas Torres <lucas.torres@email.com></div>
+                                <div class="email-subject">Re: Seguimiento declaración trimestral</div>
+                            </div>
+                            <div class="email-date">Ayer</div>
+                        </div>
+
+                        <div class="email-item" onclick="loadEmail('supplier-invoice')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">P</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Proveedores ABC <facturacion@proveedoresabc.com></div>
+                                <div class="email-subject">Factura #INV-2026-0345 - Vencimiento 15/04/2026</div>
+                            </div>
+                            <div class="email-date">25/03</div>
+                            <div class="email-attachment">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                        </div>
+
+                        <div class="email-item" onclick="loadEmail('internal-meeting')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">CM</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Carlos Martínez <carlos.martinez@gestoriagaliano.com></div>
+                                <div class="email-subject">Reunión equipo fiscal - 05/04/2026</div>
+                            </div>
+                            <div class="email-date">24/03</div>
+                        </div>
+
+                        <div class="email-item" onclick="loadEmail('laboral-update')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">J</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Javier Rodríguez <javier.rodriguez@gestoriagaliano.com></div>
+                                <div class="email-subject">Actualización normativa laboral - Marzo 2026</div>
+                            </div>
+                            <div class="email-date">22/03</div>
+                            <div class="email-attachment">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                        </div>
+
+                        <div class="email-item" onclick="loadEmail('client-documents')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">E</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Empresa XYZ <contabilidad@empresaxyz.com></div>
+                                <div class="email-subject">Documentación contable Q1 2026</div>
+                            </div>
+                            <div class="email-date">20/03</div>
+                            <div class="email-attachment">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                        </div>
+
+                        <div class="email-item" onclick="loadEmail('aeat-reminder')">
+                            <div class="email-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="email-status">AE</div>
+                            <div class="email-sender">
+                                <div class="email-sender-name">Agencia Tributaria <recordatorios@aeat.es></div>
+                                <div class="email-subject">Recordatorio: Presentación modelo 111 - Plazo 20/04/2026</div>
+                            </div>
+                            <div class="email-date">18/03</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email View -->
+                <div class="email-view">
+                    <div class="email-header">
+                        <div class="email-header-left">
+                            <button class="email-action-btn" title="Volver al listado" onclick="backToList()">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div class="email-avatar">AE</div>
+                            <div class="email-sender-info">
+                                <h3>Agencia Tributaria</h3>
+                                <p>notificaciones@aeat.es</p>
+                            </div>
+                        </div>
+                        <div class="email-actions">
+                            <button class="email-action-btn" title="Responder">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="email-action-btn" title="Responder a todos">
+                                <i class="fas fa-reply-all"></i>
+                            </button>
+                            <button class="email-action-btn" title="Reenviar">
+                                <i class="fas fa-share"></i>
+                            </button>
+                            <button class="email-action-btn" title="Archivar">
+                                <i class="fas fa-archive"></i>
+                            </button>
+                            <button class="email-action-btn" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="email-action-btn" title="Marcar como no leído">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            <button class="email-action-btn" title="Más opciones">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="email-meta">
+                        <div>
+                            <span style="margin-right: 1rem;"><strong>Asunto:</strong> Notificación importante: Cambios en la normativa de IVA para 2026</span>
+                            <span><strong>Para:</strong> gestoria@gestoriagaliano.com</span>
+                        </div>
+                        <div class="email-tags">
+                            <span class="email-tag tag-fiscal">Fiscal</span>
+                            <span class="email-tag tag-urgent">Urgente</span>
+                        </div>
+                    </div>
+
+                    <div class="email-content">
+                        <div class="email-subject">Notificación importante: Cambios en la normativa de IVA para 2026</div>
+
+                        <div class="email-body">
+                            <p>Estimados/as señores/as,</p>
+
+                            <p>Por la presente les comunicamos importantes cambios en la normativa del Impuesto sobre el Valor Añadido (IVA) que entrarán en vigor a partir del 1 de julio de 2026.</p>
+
+                            <h4>Principales cambios:</h4>
+                            <ol>
+                                <li><strong>Nuevos tipos impositivos:</strong> Se introduce un nuevo tipo reducido del 5% para productos de primera necesidad ampliados.</li>
+                                <li><strong>Modificación en la declaración trimestral:</strong> El modelo 303 incluirá nuevos apartados para declarar operaciones intracomunitarias con mayor detalle.</li>
+                                <li><strong>Plazos de presentación:</strong> Se adelanta el plazo de presentación del modelo 390 (resumen anual) al 20 de enero (antes 30 de enero).</li>
+                                <li><strong>Facturación electrónica:</strong> Obligatoriedad para todas las empresas con facturación superior a 8 millones de euros anuales.</li>
+                            </ol>
+
+                            <p>Adjuntamos el documento oficial con el detalle completo de los cambios: <a href="#" style="color: var(--secondary-color);">BOE-A-2026-1234.pdf</a></p>
+
+                            <p>Les recomendamos revisar estos cambios con detalle y adaptar sus sistemas de facturación y declaración en consecuencia. Para cualquier duda, pueden consultar nuestra página web o ponerse en contacto con su oficina de la AEAT más cercana.</p>
+
+                            <p>Atentamente,<br>
+                            <strong>Agencia Estatal de Administración Tributaria</strong><br>
+                            Departamento de Normativa y Comunicación</p>
+                        </div>
+
+                        <div class="email-attachments">
+                            <div class="attachments-title">Adjuntos (1)</div>
+                            <div class="attachment-item">
+                                <div class="attachment-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="attachment-info">
+                                    <div class="attachment-name">BOE-A-2026-1234.pdf</div>
+                                    <div class="attachment-meta">1.8 MB • 08/03/2026</div>
+                                </div>
+                                <div class="attachment-actions">
+                                    <button class="attachment-action-btn" title="Descargar" onclick="downloadAttachment('BOE-A-2026-1234.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="attachment-action-btn" title="Vista previa" onclick="previewAttachment('BOE-A-2026-1234.pdf')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="email-reply">
+                        <div class="reply-options">
+                            <button class="reply-option active" onclick="setReplyType('reply')">
+                                <i class="fas fa-reply"></i> Responder
+                            </button>
+                            <button class="reply-option" onclick="setReplyType('replyAll')">
+                                <i class="fas fa-reply-all"></i> Responder a todos
+                            </button>
+                            <button class="reply-option" onclick="setReplyType('forward')">
+                                <i class="fas fa-share"></i> Reenviar
+                            </button>
+                        </div>
+
+                        <div class="reply-form">
+                            <div class="reply-to" id="replyTo">Para: notificaciones@aeat.es</div>
+                            <div class="reply-to" id="replySubject">Asunto: Re: Notificación importante: Cambios en la normativa de IVA para 2026</div>
+                            <textarea class="reply-input" placeholder="Escribe tu respuesta..."></textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <button style="background: none; border: none; color: #666; cursor: pointer; margin-right: 1rem;" onclick="document.getElementById('replyAttachments').click()">
+                                        <i class="fas fa-paperclip"></i> Adjuntar archivos
+                                    </button>
+                                    <input type="file" id="replyAttachments" style="display: none;" multiple>
+                                </div>
+                                <div class="reply-actions">
+                                    <button class="reply-btn reply-btn-secondary" onclick="saveDraft()">
+                                        Guardar borrador
+                                    </button>
+                                    <button class="reply-btn reply-btn-primary" onclick="sendReply()">
+                                        <i class="fas fa-paper-plane"></i> Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Compose Email Modal -->
+    <div class="modal-overlay" id="composeModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo mensaje</h3>
+                <button class="modal-close" onclick="closeModal('composeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="composeTo">Para</label>
+                    <input type="text" id="composeTo" class="form-input" placeholder="Destinatarios">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="composeCc">CC</label>
+                    <input type="text" id="composeCc" class="form-input" placeholder="Copias">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="composeBcc">CCO</label>
+                    <input type="text" id="composeBcc" class="form-input" placeholder="Copias ocultas">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="composeSubject">Asunto</label>
+                    <input type="text" id="composeSubject" class="form-input" placeholder="Asunto del mensaje">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="composePriority">
+                            <label for="composePriority">Alta prioridad</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="composeReadReceipt">
+                            <label for="composeReadReceipt">Confirmación de lectura</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="composeTemplate">
+                            <label for="composeTemplate">Usar plantilla</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Etiquetas</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="tagFiscal">
+                            <label for="tagFiscal" class="email-tag tag-fiscal">Fiscal</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="tagLaboral">
+                            <label for="tagLaboral" class="email-tag" style="background-color: #3498db; color: white;">Laboral</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="tagContable">
+                            <label for="tagContable" class="email-tag" style="background-color: #9b59b6; color: white;">Contable</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="tagUrgente">
+                            <label for="tagUrgente" class="email-tag tag-urgent">Urgente</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="composeBody">Mensaje</label>
+                    <textarea id="composeBody" class="form-input form-textarea" style="min-height: 200px;" placeholder="Escribe tu mensaje..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Adjuntos</label>
+                    <div class="user-selector" onclick="document.getElementById('composeAttachments').click()">
+                        <i class="fas fa-paperclip"></i>
+                        <span>Adjuntar archivos</span>
+                    </div>
+                    <input type="file" id="composeAttachments" style="display: none;" multiple>
+                    <div id="composeAttachedFiles" style="margin-top: 0.75rem;">
+                        <!-- Los archivos adjuntos aparecerán aquí -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('composeModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="sendEmail()">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Details Modal -->
+    <div class="modal-overlay" id="emailDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalles del Correo</h3>
+                <button class="modal-close" onclick="closeModal('emailDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Notificación importante: Cambios en la normativa de IVA para 2026</h4>
+                    <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        <span><i class="fas fa-envelope" style="margin-right: 0.3rem;"></i>notificaciones@aeat.es</span>
+                        <span><i class="fas fa-calendar-alt" style="margin-right: 0.3rem;"></i>10/04/2026 10:45</span>
+                    </div>
+                </div>
+
+                <div class="document-properties">
+                    <div class="property-group">
+                        <h4>Información básica</h4>
+                        <div class="property-item">
+                            <div class="property-label">Remitente</div>
+                            <div class="property-value">Agencia Tributaria <notificaciones@aeat.es></div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Destinatario</div>
+                            <div class="property-value">Gestoría Galiano <gestoria@gestoriagaliano.com></div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Asunto</div>
+                            <div class="property-value">Notificación importante: Cambios en la normativa de IVA para 2026</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Fecha de recepción</div>
+                            <div class="property-value">10/04/2026 10:45</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Tamaño</div>
+                            <div class="property-value">8.2 KB (con adjuntos: 1.8 MB)</div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Metadatos</h4>
+                        <div class="property-item">
+                            <div class="property-label">ID de mensaje</div>
+                            <div class="property-value">MSG-2026-0410-1045-58372</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Servidor</div>
+                            <div class="property-value">mail.aeat.es</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Prioridad</div>
+                            <div class="property-value">Alta</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Formato</div>
+                            <div class="property-value">HTML</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Cifrado</div>
+                            <div class="property-value">TLS 1.3</div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Etiquetas y categorías</h4>
+                        <div class="property-item">
+                            <div class="property-label">Etiquetas</div>
+                            <div class="property-value">
+                                <span class="email-tag tag-fiscal">Fiscal</span>
+                                <span class="email-tag tag-urgent" style="margin-left: 0.5rem;">Urgente</span>
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Categoría</div>
+                            <div class="property-value">Notificaciones oficiales</div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Relacionado con</div>
+                            <div class="property-value">
+                                <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-tasks" style="color: var(--secondary-color);"></i>
+                                        <span>Tarea #FIS-2026-0412</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-user" style="color: var(--secondary-color);"></i>
+                                        <span>Cliente: Lucas Torres</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="property-group">
+                        <h4>Adjuntos</h4>
+                        <div class="property-item">
+                            <div class="property-label">Archivos adjuntos</div>
+                            <div class="property-value">
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-file-pdf" style="color: #e74c3c;"></i>
+                                        <span>BOE-A-2026-1234.pdf (1.8 MB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="property-label">Estado de adjuntos</div>
+                            <div class="property-value">Descargados (10/04/2026 11:05)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.75rem;">Historial de acciones</h4>
+                    <div style="border-left: 2px solid #eee; padding-left: 1rem;">
+                        <div style="position: relative; margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">10/04/2026 10:45</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Correo recibido y marcado como no leído</div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">10/04/2026 10:50</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Correo abierto por Ana García</div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--secondary-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">10/04/2026 11:05</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Adjunto descargado: BOE-A-2026-1234.pdf</div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--success-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">10/04/2026 11:15</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Correo marcado como leído</div>
+                        </div>
+
+                        <div style="position: relative; margin-bottom: 1rem; padding-left: 1.5rem;">
+                            <div style="position: absolute; left: -0.75rem; top: 0; width: 12px; height: 12px; background-color: var(--accent-color); border-radius: 50%;"></div>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.2rem;">10/04/2026 11:20</div>
+                            <div style="font-weight: 500; color: var(--primary-color);">Tarea creada: #FIS-2026-0412 - Revisar cambios normativa IVA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal('emailDetailsModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para alternar el sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Función para alternar el dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const userDropdown = document.getElementById('userDropdown');
+
+            if (!userProfile.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Función para cargar una carpeta de correo
+        function loadFolder(folderId) {
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Actualizar el título del listado
+            const folderNames = {
+                'inbox': 'Bandeja de entrada',
+                'sent': 'Enviados',
+                'drafts': 'Borradores',
+                'spam': 'Spam',
+                'trash': 'Papelera',
+                'fiscal': 'Fiscal',
+                'laboral': 'Laboral',
+                'contable': 'Contable',
+                'urgente': 'Urgente',
+                'unread': 'No leídos',
+                'starred': 'Destacados',
+                'attachments': 'Con adjuntos'
+            };
+
+            document.querySelector('.list-title').textContent = folderNames[folderId] || 'Bandeja de entrada';
+        }
+
+        // Función para cargar un email
+        function loadEmail(emailId) {
+            // Marcar como seleccionado
+            document.querySelectorAll('.email-item').forEach(item => {
+                item.classList.remove('selected', 'unread');
+            });
+            event.currentTarget.classList.add('selected');
+
+            // Actualizar el contenido del email según el ID
+            const emailData = {
+                'aeat-notification': {
+                    sender: 'Agencia Tributaria',
+                    email: 'notificaciones@aeat.es',
+                    subject: 'Notificación importante: Cambios en la normativa de IVA para 2026',
+                    date: '10/04/2026 10:45',
+                    body: `
+                        <p>Estimados/as señores/as,</p>
+                        <p>Por la presente les comunicamos importantes cambios en la normativa del Impuesto sobre el Valor Añadido (IVA) que entrarán en vigor a partir del 1 de julio de 2026.</p>
+                        <h4>Principales cambios:</h4>
+                        <ol>
+                            <li><strong>Nuevos tipos impositivos:</strong> Se introduce un nuevo tipo reducido del 5% para productos de primera necesidad ampliados.</li>
+                            <li><strong>Modificación en la declaración trimestral:</strong> El modelo 303 incluirá nuevos apartados para declarar operaciones intracomunitarias con mayor detalle.</li>
+                            <li><strong>Plazos de presentación:</strong> Se adelanta el plazo de presentación del modelo 390 (resumen anual) al 20 de enero (antes 30 de enero).</li>
+                            <li><strong>Facturación electrónica:</strong> Obligatoriedad para todas las empresas con facturación superior a 8 millones de euros anuales.</li>
+                        </ol>
+                        <p>Adjuntamos el documento oficial con el detalle completo de los cambios: <a href="#" style="color: var(--secondary-color);">BOE-A-2026-1234.pdf</a></p>
+                        <p>Les recomendamos revisar estos cambios con detalle y adaptar sus sistemas de facturación y declaración en consecuencia.</p>
+                        <p>Atentamente,<br>Agencia Estatal de Administración Tributaria</p>
+                    `,
+                    attachments: [
+                        { name: 'BOE-A-2026-1234.pdf', size: '1.8 MB', date: '08/03/2026' }
+                    ],
+                    tags: ['Fiscal', 'Urgente']
+                },
+                'client-followup': {
+                    sender: 'Lucas Torres',
+                    email: 'lucas.torres@email.com',
+                    subject: 'Re: Seguimiento declaración trimestral',
+                    date: '09/04/2026 16:30',
+                    body: `
+                        <p>Hola Ana,</p>
+                        <p>Gracias por tu último correo. He revisado los documentos que me enviaste y todo parece estar en orden. Solo tengo una duda sobre el apartado de deducciones en el modelo 130.</p>
+                        <p>¿Podrías confirmarme si las deducciones por inversión en equipo informático que he incluido son correctas? Adjunto el justificante de compra por si necesitas revisarlo.</p>
+                        <p>Por lo demás, todo parece correcto y estoy de acuerdo con los importes calculados.</p>
+                        <p>Quedo a la espera de tu confirmación para proceder con el pago.</p>
+                        <p>Un saludo,<br>Lucas Torres</p>
+                    `,
+                    attachments: [
+                        { name: 'justificante_compra_equipo.pdf', size: '450 KB', date: '09/04/2026' }
+                    ],
+                    tags: ['Fiscal', 'Cliente']
+                }
+            };
+
+            const data = emailData[emailId] || emailData['aeat-notification'];
+
+            // Actualizar la vista del email
+            document.querySelector('.email-header-bar').style.display = 'flex';
+            document.querySelector('.email-view-empty').style.display = 'none';
+            document.querySelector('.email-content').style.display = 'block';
+
+            // Actualizar header
+            document.querySelector('.email-avatar').textContent = data.sender.split(' ').map(n => n[0]).join('').substring(0, 2);
+            document.querySelector('.email-sender-info h3').textContent = data.sender;
+            document.querySelector('.email-sender-info p').textContent = data.email;
+
+            // Actualizar metadatos
+            document.querySelector('.email-meta div:first-child span:first-child').textContent = `Asunto: ${data.subject}`;
+            document.querySelector('.email-meta div:first-child span:last-child').textContent = `Para: gestoria@gestoriagaliano.com`;
+
+            // Actualizar tags
+            const tagsContainer = document.querySelector('.email-tags');
+            tagsContainer.innerHTML = '';
+            data.tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'email-tag';
+
+                if (tag === 'Fiscal') tagElement.classList.add('tag-fiscal');
+                else if (tag === 'Urgente') tagElement.classList.add('tag-urgent');
+                else if (tag === 'Cliente') tagElement.classList.add('tag-client');
+                else tagElement.classList.add('tag-client');
+
+                tagElement.textContent = tag;
+                tagsContainer.appendChild(tagElement);
+            });
+
+            // Actualizar contenido
+            document.querySelector('.email-content .email-subject').textContent = data.subject;
+            document.querySelector('.email-body').innerHTML = data.body;
+
+            // Actualizar adjuntos
+            const attachmentsContainer = document.querySelector('.email-attachments');
+            if (data.attachments && data.attachments.length > 0) {
+                attachmentsContainer.style.display = 'block';
+                const attachmentsList = document.querySelector('.attachments-title').nextElementSibling;
+                attachmentsList.innerHTML = '';
+
+                data.attachments.forEach(attachment => {
+                    const attachmentElement = document.createElement('div');
+                    attachmentElement.className = 'attachment-item';
+                    attachmentElement.innerHTML = `
+                        <div class="attachment-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="attachment-info">
+                            <div class="attachment-name">${attachment.name}</div>
+                            <div class="attachment-meta">${attachment.size} • ${attachment.date}</div>
+                        </div>
+                        <div class="attachment-actions">
+                            <button class="attachment-action-btn" title="Descargar" onclick="downloadAttachment('${attachment.name}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="attachment-action-btn" title="Vista previa" onclick="previewAttachment('${attachment.name}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    `;
+                    attachmentsList.appendChild(attachmentElement);
+                });
+            } else {
+                attachmentsContainer.style.display = 'none';
+            }
+        }
+
+        // Función para volver al listado
+        function backToList() {
+            document.querySelector('.email-header-bar').style.display = 'none';
+            document.querySelector('.email-view-empty').style.display = 'flex';
+            document.querySelector('.email-content').style.display = 'none';
+
+            // Deseleccionar todos los emails
+            document.querySelectorAll('.email-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        // Función para abrir modal de redacción
+        function openComposeModal() {
+            document.getElementById('composeModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de detalles
+        function openEmailDetails() {
+            document.getElementById('emailDetailsModal').style.display = 'flex';
+        }
+
+        // Función para establecer tipo de respuesta
+        function setReplyType(type) {
+            document.querySelectorAll('.reply-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            const replyTo = document.getElementById('replyTo');
+            const replySubject = document.getElementById('replySubject');
+
+            if (type === 'reply') {
+                replyTo.textContent = 'Para: notificaciones@aeat.es';
+                replySubject.textContent = 'Asunto: Re: Notificación importante: Cambios en la normativa de IVA para 2026';
+            } else if (type === 'replyAll') {
+                replyTo.textContent = 'Para: notificaciones@aeat.es; gestoria@gestoriagaliano.com';
+                replySubject.textContent = 'Asunto: Re: Notificación importante: Cambios en la normativa de IVA para 2026';
+            } else if (type === 'forward') {
+                replyTo.textContent = 'Para: ';
+                replySubject.textContent = 'Asunto: Fwd: Notificación importante: Cambios en la normativa de IVA para 2026';
+            }
+        }
+
+        // Función para enviar respuesta
+        function sendReply() {
+            const replyText = document.querySelector('.reply-input').value.trim();
+
+            if (!replyText) {
+                alert('Por favor, escribe tu respuesta antes de enviar');
+                return;
+            }
+
+            alert('Respuesta enviada con éxito');
+            closeModal('composeModal');
+        }
+
+        // Función para guardar borrador
+        function saveDraft() {
+            alert('Borrador guardado con éxito');
+        }
+
+        // Función para enviar email
+        function sendEmail() {
+            const to = document.getElementById('composeTo').value.trim();
+            const subject = document.getElementById('composeSubject').value.trim();
+            const body = document.getElementById('composeBody').value.trim();
+
+            if (!to) {
+                alert('Por favor, introduce al menos un destinatario');
+                return;
+            }
+
+            if (!subject) {
+                alert('Por favor, introduce un asunto para el mensaje');
+                return;
+            }
+
+            if (!body) {
+                alert('Por favor, escribe el contenido del mensaje');
+                return;
+            }
+
+            alert('Correo enviado con éxito');
+            closeModal('composeModal');
+        }
+
+        // Función para descargar adjuntos
+        function downloadAttachment(filename) {
+            alert(`Descargando adjunto: ${filename}`);
+        }
+
+        // Función para ver vista previa de adjuntos
+        function previewAttachment(filename) {
+            alert(`Mostrando vista previa de: ${filename}`);
+        }
+
+        // Función para manejar la selección de archivos en composición
+        document.getElementById('composeAttachments').addEventListener('change', function(e) {
+            const selectedFiles = document.getElementById('composeAttachedFiles');
+            selectedFiles.innerHTML = '';
+
+            for (const file of e.target.files) {
+                const fileItem = document.createElement('div');
+                fileItem.style.display = 'flex';
+                fileItem.style.alignItems = 'center';
+                fileItem.style.gap = '0.75rem';
+                fileItem.style.padding = '0.5rem';
+                fileItem.style.backgroundColor = '#f9f9f9';
+                fileItem.style.borderRadius = '4px';
+                fileItem.style.marginBottom = '0.5rem';
+
+                const fileSize = (file.size / 1024).toFixed(file.size < 1024000 ? 2 : 1);
+                const fileSizeUnit = file.size < 1024000 ? 'KB' : 'MB';
+
+                fileItem.innerHTML = `
+                    <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                        ${getFileIcon(file.name)}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: var(--primary-color);">${file.name}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${fileSize} ${fileSizeUnit}</div>
+                    </div>
+                    <button style="background: none; border: none; color: #666; cursor: pointer;" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                selectedFiles.appendChild(fileItem);
+            }
+        });
+
+        // Función para obtener icono de archivo
+        function getFileIcon(filename) {
+            if (filename.endsWith('.pdf')) return '<i class="fas fa-file-pdf"></i>';
+            if (filename.endsWith('.doc') || filename.endsWith('.docx')) return '<i class="fas fa-file-word"></i>';
+            if (filename.endsWith('.xls') || filename.endsWith('.xlsx')) return '<i class="fas fa-file-excel"></i>';
+            if (filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.png')) return '<i class="fas fa-file-image"></i>';
+            if (filename.endsWith('.zip') || filename.endsWith('.rar')) return '<i class="fas fa-file-archive"></i>';
+            return '<i class="fas fa-file-alt"></i>';
+        }
+
+        // Función para abrir modal
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Función para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal-overlay[style="display: flex;"]');
+                openModals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar el selector de "Otro destinatario" en compartir
+            document.getElementById('shareOther').addEventListener('change', function() {
+                document.getElementById('otherRecipientGroup').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Configurar el selector de fecha de caducidad
+            document.getElementById('shareSetExpiry').addEventListener('change', function() {
+                document.getElementById('shareExpiryDate').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Cargar el primer email por defecto
+            loadEmail('aeat-notification');
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

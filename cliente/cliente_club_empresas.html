@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Empresas | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a252f 100%);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .logo-slogan {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: -0.3rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+        }
+
+        .nav-link.active {
+            color: var(--secondary-color);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            width: 250px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.15);
+            width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 220px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            color: var(--text-color);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 0.25rem 0;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-item {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .sidebar-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sidebar-item.active {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .sidebar-icon {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .sidebar-item.active .sidebar-icon {
+            color: var(--secondary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--secondary-color);
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+
+        .hero-image {
+            flex-shrink: 0;
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #c49f30 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .benefit-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-icon.discount {
+            background-color: #e91e63;
+        }
+
+        .benefit-icon.support {
+            background-color: #4caf50;
+        }
+
+        .benefit-icon.legal {
+            background-color: #9c27b0;
+        }
+
+        .benefit-icon.network {
+            background-color: #2196f3;
+        }
+
+        .benefit-icon.training {
+            background-color: #ff9800;
+        }
+
+        .benefit-icon.tech {
+            background-color: #607d8b;
+        }
+
+        .benefit-content h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            margin-bottom: 2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-image {
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .service-content {
+            padding: 1.25rem;
+        }
+
+        .service-content h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-content p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            margin-bottom: 2rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .testimonial-info h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .testimonial-content {
+            font-style: italic;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        /* News Section */
+        .news-section {
+            margin-bottom: 2rem;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-image {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .news-content {
+            padding: 1.25rem;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        .news-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .news-excerpt {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Events Section */
+        .events-section {
+            margin-bottom: 2rem;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .event-item {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .event-date {
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .event-day {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+
+        .event-month {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .event-time {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            margin-top: 0.25rem;
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .event-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .event-btn.primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .event-btn.secondary {
+            background-color: transparent;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+        }
+
+        /* Partners Section */
+        .partners-section {
+            margin-bottom: 2rem;
+        }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .partner-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            transition: var(--transition);
+        }
+
+        .partner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .partner-logo {
+            max-width: 100%;
+            max-height: 40px;
+            opacity: 0.7;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 2rem;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .faq-question {
+            padding: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+
+        .faq-question h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .faq-answer {
+            padding: 0 1.25rem 1.25rem;
+            color: #666;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-question {
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a252f 100%);
+            color: var(--text-light);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-description {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 2.5rem 2rem 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        /* Badges and Notifications */
+        .badge {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .notification-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+
+            .hero-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 1.5rem;
+            }
+
+            .benefits-grid,
+            .services-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-section">
+                <div class="logo-icon">GE</div>
+                <div>
+                    <div class="logo-text">Gestoría Galiano</div>
+                    <div class="logo-slogan">Club Empresas</div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#beneficios" class="nav-link">
+                            <i class="fas fa-gift"></i>
+                            Beneficios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#servicios" class="nav-link">
+                            <i class="fas fa-concierge-bell"></i>
+                            Servicios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#eventos" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i>
+                            Eventos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#testimonios" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            Testimonios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#contacto" class="nav-link active">
+                            <i class="fas fa-envelope"></i>
+                            Contacto
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar en el Club...">
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">LT</div>
+                <div class="user-info">
+                    <div class="user-name">Lucas Torres</div>
+                    <div class="user-role">Empresa XYZ, S.L.</div>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>Mi Perfil</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Mis Documentos</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificaciones</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar sesión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Menú Rápido</h3>
+            <div class="sidebar-menu">
+                <div class="sidebar-item active">
+                    <i class="fas fa-home sidebar-icon"></i>
+                    <span>Inicio</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-gift sidebar-icon"></i>
+                    <span>Beneficios</span>
+                    <span class="badge">Nuevo</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-concierge-bell sidebar-icon"></i>
+                    <span>Servicios Exclusivos</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-calendar-alt sidebar-icon"></i>
+                    <span>Próximos Eventos</span>
+                    <span class="badge">2</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-file-alt sidebar-icon"></i>
+                    <span>Documentación</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-users sidebar-icon"></i>
+                    <span>Red de Contactos</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-graduation-cap sidebar-icon"></i>
+                    <span>Formación</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-envelope sidebar-icon"></i>
+                    <span>Mensajes</span>
+                    <span class="notification-badge">5</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">Bienvenido al Club Empresas de Gestoría Galiano</h1>
+                    <p class="hero-description">
+                        Accede a servicios exclusivos, descuentos especiales y una red de contactos profesionales
+                        diseñados para impulsar el crecimiento de tu empresa.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary">
+                            <i class="fas fa-gift"></i>
+                            Ver Beneficios
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-calendar-alt"></i>
+                            Próximos Eventos
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <i class="fas fa-handshake"></i>
+                </div>
+            </section>
+
+            <!-- Benefits Section -->
+            <section class="benefits-section" id="beneficios">
+                <h2 class="section-title">
+                    <i class="fas fa-gift"></i>
+                    Beneficios Exclusivos
+                </h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon discount">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Descuentos Especiales</h4>
+                            <p>Hasta un 20% de descuento en todos nuestros servicios de asesoría fiscal, laboral y contable.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon support">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Soporte Prioritario</h4>
+                            <p>Atención preferente con tiempos de respuesta garantizados para tus consultas urgentes.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon legal">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Asesoría Legal Gratuita</h4>
+                            <p>1 hora mensual de asesoría legal básica sin coste adicional con nuestros abogados colaboradores.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon network">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Red de Contactos</h4>
+                            <p>Acceso a nuestra exclusiva red de empresarios y profesionales para generar sinergias.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon training">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Formación Continua</h4>
+                            <p>Acceso gratuito a webinars y talleres sobre temas clave para tu negocio.</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon tech">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <div class="benefit-content">
+                            <h4>Herramientas Digitales</h4>
+                            <p>Acceso a plataformas de gestión y análisis con descuentos especiales para miembros.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="services-section" id="servicios">
+                <h2 class="section-title">
+                    <i class="fas fa-concierge-bell"></i>
+                    Servicios Exclusivos para Miembros
+                </h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Análisis Financiero Avanzado</h4>
+                            <p>Informe trimestral personalizado con análisis de ratios financieros y recomendaciones de mejora.</p>
+                            <a href="#" class="service-link">
+                                Solicitar análisis
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Revisión de Contratos</h4>
+                            <p>Análisis legal de hasta 3 contratos al año sin coste adicional para miembros del club.</p>
+                            <a href="#" class="service-link">
+                                Solicitar revisión
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-search-dollar"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Optimización Fiscal</h4>
+                            <p>Sesión anual de planificación fiscal para identificar oportunidades de ahorro y optimización.</p>
+                            <a href="#" class="service-link">
+                                Solicitar sesión
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Marketing y Visibilidad</h4>
+                            <p>Inclusión en nuestro directorio de empresas recomendadas y promoción en redes sociales.</p>
+                            <a href="#" class="service-link">
+                                Más información
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Internacionalización</h4>
+                            <p>Asesoramiento especializado para empresas que quieran expandirse a mercados internacionales.</p>
+                            <a href="#" class="service-link">
+                                Solicitar asesoramiento
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-image">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="service-content">
+                            <h4>Protección de Datos</h4>
+                            <p>Auditoría básica de protección de datos y adaptación a RGPD con descuento especial.</p>
+                            <a href="#" class="service-link">
+                                Solicitar auditoría
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section class="testimonials-section" id="testimonios">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    Lo que dicen nuestros miembros
+                </h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-avatar">EP</div>
+                            <div class="testimonial-info">
+                                <h5>Elena Pérez</h5>
+                                <p>Directora, Pérez Asociados</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            "Gracias al Club Empresas hemos optimizado nuestra estructura fiscal y reducido costes en un 18%. El servicio de asesoría prioritaria ha sido clave para resolver problemas urgentes."
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-avatar">MG</div>
+                            <div class="testimonial-info">
+                                <h5>Mario Gómez</h5>
+                                <p>Gerente, Gómez Tecnología</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            "La red de contactos del club nos ha permitido establecer colaboraciones con 3 nuevas empresas este año. Además, los talleres de formación son excelentes y muy prácticos."
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star-half-alt star"></i>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-avatar">SR</div>
+                            <div class="testimonial-info">
+                                <h5>Sofía Ruiz</h5>
+                                <p>CEO, Ruiz Logística</p>
+                            </div>
+                        </div>
+                        <div class="testimonial-content">
+                            "El servicio de optimización fiscal nos ha ahorrado más de 12.000€ anuales. La atención personalizada y los informes trimestrales son herramientas muy valiosas para nuestra empresa."
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section class="news-section">
+                <h2 class="section-title">
+                    <i class="fas fa-newspaper"></i>
+                    Novedades y Actualizaciones
+                </h2>
+                <div class="news-grid">
+                    <div class="news-card">
+                        <div class="news-image">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar-alt"></i> 15 Mar 2026</span>
+                                <span><i class="fas fa-tag"></i> Legal</span>
+                            </div>
+                            <h4 class="news-title">Nuevos cambios en la ley de autónomos 2026</h4>
+                            <p class="news-excerpt">Analizamos las principales novedades de la nueva ley y cómo afectan a tu negocio. Incluimos recomendaciones para adaptarte a los cambios.</p>
+                            <a href="#" class="news-link">
+                                Leer más
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <div class="news-image">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar-alt"></i> 10 Mar 2026</span>
+                                <span><i class="fas fa-tag"></i> Fiscal</span>
+                            </div>
+                            <h4 class="news-title">Nuevas deducciones fiscales para pymes en 2026</h4>
+                            <p class="news-excerpt">Descubre las nuevas deducciones disponibles para pymes y cómo puedes beneficiarte de ellas. Te ayudamos a optimizar tu declaración.</p>
+                            <a href="#" class="news-link">
+                                Leer más
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <div class="news-image">
+                            <i class="fas fa-globe-europe"></i>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span><i class="fas fa-calendar-alt"></i> 05 Mar 2026</span>
+                                <span><i class="fas fa-tag"></i> Internacional</span>
+                            </div>
+                            <h4 class="news-title">Guía para exportar a la UE: Novedades 2026</h4>
+                            <p class="news-excerpt">Todo lo que necesitas saber sobre los nuevos requisitos para exportar a países de la UE. Incluye checklist de documentación necesaria.</p>
+                            <a href="#" class="news-link">
+                                Leer más
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section class="events-section" id="eventos">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Próximos Eventos Exclusivos
+                </h2>
+                <div class="events-list">
+                    <div class="event-item">
+                        <div class="event-date">
+                            <div class="event-day">25</div>
+                            <div class="event-month">ABR</div>
+                            <div class="event-time">10:00 - 13:00</div>
+                        </div>
+                        <div class="event-content">
+                            <h4 class="event-title">Taller: Optimización Fiscal para Pymes 2026</h4>
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Sala de Formación Gestoría Galiano</span>
+                            </div>
+                            <p class="event-description">
+                                Aprende a maximizar las deducciones fiscales y reducir tu carga tributaria de forma legal.
+                                Incluye análisis de casos prácticos y sesión de preguntas.
+                            </p>
+                            <div class="event-actions">
+                                <button class="event-btn primary">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Apuntarme
+                                </button>
+                                <button class="event-btn secondary">
+                                    <i class="fas fa-info-circle"></i>
+                                    Más info
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-item">
+                        <div class="event-date">
+                            <div class="event-day">12</div>
+                            <div class="event-month">MAY</div>
+                            <div class="event-time">18:00 - 20:30</div>
+                        </div>
+                        <div class="event-content">
+                            <h4 class="event-title">Networking: Encuentro de Empresarios</h4>
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Hotel Palacio de los Duques</span>
+                            </div>
+                            <p class="event-description">
+                                Evento exclusivo para miembros del Club Empresas. Oportunidad única para establecer contactos
+                                con otros empresarios y profesionales de diferentes sectores.
+                            </p>
+                            <div class="event-actions">
+                                <button class="event-btn primary">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Confirmar asistencia
+                                </button>
+                                <button class="event-btn secondary">
+                                    <i class="fas fa-user-friends"></i>
+                                    Ver asistentes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-item">
+                        <div class="event-date">
+                            <div class="event-day">05</div>
+                            <div class="event-month">JUN</div>
+                            <div class="event-time">09:30 - 14:00</div>
+                        </div>
+                        <div class="event-content">
+                            <h4 class="event-title">Jornada: Transformación Digital para Pymes</h4>
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Cámara de Comercio</span>
+                            </div>
+                            <p class="event-description">
+                                Descubre cómo implementar soluciones digitales en tu empresa para mejorar la productividad
+                                y reducir costes. Con casos prácticos y demostraciones en vivo.
+                            </p>
+                            <div class="event-actions">
+                                <button class="event-btn primary">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Reserva plaza
+                                </button>
+                                <button class="event-btn secondary">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Descargar programa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Partners Section -->
+            <section class="partners-section">
+                <h2 class="section-title">
+                    <i class="fas fa-handshake"></i>
+                    Nuestros Colaboradores
+                </h2>
+                <div class="partners-grid">
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Banco Santander logo" class="partner-logo">
+                    </div>
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Telefónica Empresas logo" class="partner-logo">
+                    </div>
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Mapfre logo" class="partner-logo">
+                    </div>
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Sage logo" class="partner-logo">
+                    </div>
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Asepeyo logo" class="partner-logo">
+                    </div>
+                    <div class="partner-card">
+                        <img src="placeholder.img" alt="Cámara Comercio logo" class="partner-logo">
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="faq-section">
+                <h2 class="section-title">
+                    <i class="fas fa-question-circle"></i>
+                    Preguntas Frecuentes
+                </h2>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h4>¿Cómo puedo acceder a los beneficios del Club Empresas?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Para acceder a los beneficios del Club Empresas, debes ser cliente activo de Gestoría Galiano con al menos 1 año de antigüedad.
+                        El acceso es automático para clientes que facturen más de 50.000€ anuales. Para otros clientes, se puede solicitar
+                        la adhesión a través de tu asesor personal.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h4>¿Cuál es el coste de pertenencia al Club Empresas?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        La pertenencia al Club Empresas es completamente gratuita para clientes que cumplan los requisitos.
+                        No hay cuotas anuales ni costes ocultos. Todos los servicios incluidos en el club están cubiertos por
+                        tu contrato de asesoría con Gestoría Galiano.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h4>¿Puedo invitar a otros empresarios a unirse al club?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sí, como miembro del Club Empresas puedes invitar a otros empresarios. Si se convierten en clientes
+                        de Gestoría Galiano gracias a tu recomendación, ambos recibiréis un bono de 200€ en servicios de asesoría.
+                        Ponte en contacto con tu asesor para más detalles sobre el programa de recomendaciones.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h4>¿Cómo solicito los servicios exclusivos del club?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Puedes solicitar cualquier servicio exclusivo a través de tu área privada en nuestra plataforma,
+                        llamando a tu asesor personal o enviando un email a clubempresas@gestoriagaliano.com.
+                        La mayoría de servicios se activan en menos de 24 horas.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h4>¿Qué pasa si dejo de ser cliente de Gestoría Galiano?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Si dejas de ser cliente de Gestoría Galiano, perderás el acceso a los beneficios del Club Empresas.
+                        Sin embargo, si vuelves a contratar nuestros servicios en un plazo de 12 meses, recuperarás automáticamente
+                        tu membresía con todos sus beneficios.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section class="contact-section" id="contacto">
+                <h2 class="contact-title">¿Necesitas más información?</h2>
+                <p class="contact-description">
+                    Estamos aquí para ayudarte. Déjanos tus datos y nos pondremos en contacto contigo
+                    para resolver cualquier duda sobre el Club Empresas.
+                </p>
+
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label class="form-label">Nombre y Apellidos</label>
+                        <input type="text" class="form-input" placeholder="Ej: Lucas Torres">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Ej: lucas.torres@empresa.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" class="form-input" placeholder="Ej: 654 321 098">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" class="form-input" placeholder="Ej: Empresa XYZ, S.L.">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mensaje</label>
+                        <textarea class="form-input form-textarea" placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
+                    </div>
+
+                    <button type="submit" class="form-submit">Enviar Mensaje</button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Gestoría Galiano</h4>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Tu gestoría de confianza con más de 20 años de experiencia ayudando a empresas a crecer.
+                </p>
+                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
+                    <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i>
+                    Calle Mayor, 45, 28013 Madrid
+                </div>
+                <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; margin-top: 0.3rem;">
+                    <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>
+                    91 123 45 67
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Club Empresas</h4>
+                <ul class="footer-links">
+                    <li><a href="#beneficios">Beneficios</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#eventos">Eventos</a></li>
+                    <li><a href="#testimonios">Testimonios</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Servicios</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Asesoría Fiscal</a></li>
+                    <li><a href="#">Asesoría Laboral</a></li>
+                    <li><a href="#">Contabilidad</a></li>
+                    <li><a href="#">Legal</a></li>
+                    <li><a href="#">Internacionalización</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Recursos</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Guías y Plantillas</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                    <li><a href="#">Área Cliente</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 Gestoría Galiano. Todos los derechos reservados.</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Función para alternar el dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const userDropdown = document.getElementById('userDropdown');
+
+            if (!userProfile.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Función para alternar FAQ
+        function toggleFaq(element) {
+            const faqItem = element.closest('.faq-item');
+            const chevron = element.querySelector('i');
+
+            faqItem.classList.toggle('active');
+
+            if (faqItem.classList.contains('active')) {
+                chevron.classList.remove('fa-chevron-down');
+                chevron.classList.add('fa-chevron-up');
+            } else {
+                chevron.classList.remove('fa-chevron-up');
+                chevron.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Función para manejar el envío del formulario de contacto
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Gracias por contactarnos. Nos pondremos en contacto contigo pronto.');
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar el menú activo según la URL
+            const hash = window.location.hash;
+            if (hash) {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    }
+                });
+
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.querySelector('a') && item.querySelector('a').getAttribute('href') === hash) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+
+            // Configurar el scroll suave para los enlaces
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Cerrar dropdown si está abierto
+                    document.getElementById('userDropdown').classList.remove('show');
+
+                    // Marcar como activo
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</body>
+</html>

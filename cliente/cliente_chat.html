@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat con Gestoría | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .chat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-info h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .chat-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            background-color: #f9f9f9;
+            border-right: 1px solid #eee;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #999;
+        }
+
+        .conversation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .conversation-item {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            background-color: white;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .conversation-item:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-1px);
+        }
+
+        .conversation-item.active {
+            background-color: #e8f4f8;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .conversation-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .conversation-info {
+            flex: 1;
+        }
+
+        .conversation-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+            color: var(--primary-color);
+        }
+
+        .conversation-preview {
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .conversation-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .unread-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-client-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .client-details h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .client-details p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-message.sent {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.received {
+            background-color: #f1f1f1;
+            color: var(--text-color);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .message-sender {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .message-content {
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .chat-message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-actions button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .document-preview {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #eee;
+        }
+
+        .document-icon {
+            color: var(--secondary-color);
+            font-size: 20px;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .document-actions button {
+            background-color: #f1f1f1;
+            border: none;
+            padding: 3px 8px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .chat-input-area {
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .chat-input-tools button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .chat-input-tools button:hover {
+            color: var(--secondary-color);
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            resize: none;
+            min-height: 45px;
+            max-height: 150px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        #messageInput:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .send-button {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 12px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .send-button:hover {
+            background-color: #b8952d;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dots div {
+            width: 5px;
+            height: 5px;
+            background-color: #999;
+            border-radius: 50%;
+            animation: typing 1.5s infinite ease-in-out;
+        }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .typing-dots div:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dots div:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .typing-dots div:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .chat-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding: 10px;
+            }
+
+            .chat-main {
+                height: calc(100vh - 200px);
+            }
+
+            .chat-input-tools {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="chat-header">
+            <button class="back-btn" onclick="window.location.href='cliente_home.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="chat-info">
+                <h2>Gestoría Galiano</h2>
+                <p>2 gestores en línea</p>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">LT</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="chat-sidebar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Buscar conversaciones...">
+            </div>
+
+            <h3 style="margin-bottom: 15px; font-size: 14px; color: var(--primary-color);">Conversaciones recientes</h3>
+            <ul class="conversation-list">
+                <li class="conversation-item active">
+                    <div class="conversation-avatar">AG</div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Ana García</div>
+                        <div class="conversation-preview">Revisión documentación fiscal Q1</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div>10:45</div>
+                        <div class="unread-badge">2</div>
+                    </div>
+                </li>
+
+                <li class="conversation-item">
+                    <div class="conversation-avatar">CM</div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Carlos Martínez</div>
+                        <div class="conversation-preview">Consulta sobre facturas pendientes</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div>Ayer</div>
+                    </div>
+                </li>
+
+                <li class="conversation-item">
+                    <div class="conversation-avatar">LG</div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Laura Gómez</div>
+                        <div class="conversation-preview">Recordatorio declaración anual</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div>25/03</div>
+                        <div class="unread-badge">1</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-client-info">
+                    <div class="client-avatar">AG</div>
+                    <div class="client-details">
+                        <h3>Ana García</h3>
+                        <p>Asesora Fiscal • Gestoría Galiano</p>
+                    </div>
+                </div>
+                <div class="chat-status">
+                    <div class="status-dot"></div>
+                    <span>En línea</span>
+                </div>
+            </div>
+
+            <div class="message-header">
+                <i class="fas fa-info-circle"></i>
+                <span>Conversación iniciada el 25/03/2026 • Caso #FIS-2026-0345</span>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message received">
+                    <div class="message-header">
+                        <span class="message-sender">Ana García</span>
+                        <span class="message-time">25/03/2026 10:30</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Buenos días Lucas, espero que estés bien. Necesitamos que nos envíes el último recibo de autónomos para completar tu declaración trimestral.</p>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Responder"><i class="fas fa-reply"></i></button>
+                    </div>
+                </div>
+
+                <div class="chat-message sent">
+                    <div class="message-header">
+                        <span class="message-sender">Tú</span>
+                        <span class="message-time">25/03/2026 10:32</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Buenos días Ana, ahora mismo lo busco y lo adjunto. ¿Necesitan algo más para la declaración?</p>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Editar"><i class="fas fa-edit"></i></button>
+                        <button title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="chat-message received">
+                    <div class="message-header">
+                        <span class="message-sender">Ana García</span>
+                        <span class="message-time">25/03/2026 10:35</span>
+                    </div>
+                    <div class="message-content">
+                        <p>También necesitamos el justificante de pago de la cuota de marzo. Gracias por tu rapidez.</p>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Responder"><i class="fas fa-reply"></i></button>
+                    </div>
+                </div>
+
+                <div class="chat-message sent">
+                    <div class="message-header">
+                        <span class="message-sender">Tú</span>
+                        <span class="message-time">25/03/2026 10:40</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Adjunto ambos documentos como solicitan:</p>
+                        <div class="document-preview">
+                            <span class="document-icon">📄</span>
+                            <div class="document-info">
+                                <strong>recibo_autonomos_marzo.pdf</strong>
+                                <div style="font-size: 12px; color: #666;">1.2MB • 25/03/2026</div>
+                            </div>
+                            <div class="document-actions">
+                                <button onclick="downloadDocument('recibo_autonomos_marzo.pdf')">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="document-preview">
+                            <span class="document-icon">📄</span>
+                            <div class="document-info">
+                                <strong>justificante_pago_marzo.pdf</strong>
+                                <div style="font-size: 12px; color: #666;">800KB • 25/03/2026</div>
+                            </div>
+                            <div class="document-actions">
+                                <button onclick="downloadDocument('justificante_pago_marzo.pdf')">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Editar"><i class="fas fa-edit"></i></button>
+                        <button title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="chat-message received">
+                    <div class="message-header">
+                        <span class="message-sender">Ana García</span>
+                        <span class="message-time">25/03/2026 10:45</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Perfecto Lucas, gracias por la rapidez. Revisaremos los documentos y te informaremos en cuanto tengamos novedades. ¿Necesitas algo más de nuestra parte?</p>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Responder"><i class="fas fa-reply"></i></button>
+                    </div>
+                </div>
+
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="status-dot"></div>
+                    <span>Ana está escribiendo...</span>
+                    <div class="typing-dots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="chat-input-tools">
+                    <button title="Adjuntar archivo" onclick="document.getElementById('file-upload').click()">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button title="Insertar plantilla">
+                        <i class="fas fa-file-alt"></i>
+                    </button>
+                    <input type="file" id="file-upload" style="display: none;" multiple>
+                </div>
+                <textarea id="messageInput" placeholder="Escribe tu mensaje..." rows="1" oninput="adjustTextareaHeight()"></textarea>
+                <button class="send-button" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ajustar altura del textarea según contenido
+        function adjustTextareaHeight() {
+            const textarea = document.getElementById('messageInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        // Función para enviar mensajes
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (message) {
+                // Crear nuevo mensaje en el chat
+                const chatMessages = document.getElementById('chatMessages');
+                const newMessage = document.createElement('div');
+                newMessage.className = 'chat-message sent';
+                newMessage.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-sender">Tú</span>
+                        <span class="message-time">${getCurrentTime()}</span>
+                    </div>
+                    <div class="message-content">
+                        <p>${message}</p>
+                    </div>
+                    <div class="message-actions">
+                        <button title="Editar"><i class="fas fa-edit"></i></button>
+                        <button title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                chatMessages.appendChild(newMessage);
+
+                // Limpiar el campo de entrada
+                messageInput.value = '';
+                adjustTextareaHeight();
+
+                // Scroll al final del chat
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Mostrar indicador de "escribiendo" de la gestoría
+                const typingIndicator = document.getElementById('typingIndicator');
+                typingIndicator.style.display = 'flex';
+
+                // Simular respuesta de la gestoría después de 2 segundos
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+
+                    const response = document.createElement('div');
+                    response.className = 'chat-message received';
+                    response.innerHTML = `
+                        <div class="message-header">
+                            <span class="message-sender">Ana García</span>
+                            <span class="message-time">${getCurrentTime()}</span>
+                        </div>
+                        <div class="message-content">
+                            <p>Gracias por tu mensaje, Lucas. Lo revisaremos y te responderemos en cuanto tengamos novedades.</p>
+                        </div>
+                        <div class="message-actions">
+                            <button title="Responder"><i class="fas fa-reply"></i></button>
+                        </div>
+                    `;
+                    chatMessages.appendChild(response);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 2000);
+            }
+        }
+
+        // Función para obtener la hora actual formateada
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // Permitir enviar mensaje con la tecla Enter
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Función para descargar documentos (simulada)
+        function downloadDocument(filename) {
+            alert(`Descargando documento: ${filename}`);
+        }
+
+        // Cargar más mensajes al hacer scroll (simulado)
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.addEventListener('scroll', function() {
+            if (this.scrollTop < 50) {
+                // Simular carga de mensajes antiguos
+                console.log('Cargando mensajes antiguos...');
+            }
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

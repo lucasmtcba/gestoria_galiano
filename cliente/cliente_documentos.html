@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Documental | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 6px;
+            --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            padding: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Page Title */
+        .page-title {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .page-title h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Documents Layout */
+        .documents-layout {
+            display: flex;
+            gap: 1.5rem;
+            height: calc(100vh - 150px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.25rem;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .folder-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .folder-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            margin-bottom: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .folder-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .folder-item.active {
+            background-color: #e8f4f8;
+            font-weight: 500;
+        }
+
+        .folder-icon {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .folder-name {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .folder-count {
+            background-color: #e0e0e0;
+            color: #666;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .new-folder-btn {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 0.6rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            margin-top: auto;
+        }
+
+        .new-folder-btn:hover {
+            background-color: #b8952d;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Content Header */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .content-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Document Table */
+        .document-table {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            padding: 0.75rem 1rem;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .table-body {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .document-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .document-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .document-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .document-icon {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+        }
+
+        .document-file-name {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .document-date,
+        .document-size {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .document-status {
+            text-align: center;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-received {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-sent {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .document-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: auto;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Document Preview Modal */
+        .document-preview-content {
+            text-align: center;
+        }
+
+        .document-icon-large {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .document-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 2rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .meta-item {
+            margin-bottom: 1rem;
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .activity-list {
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-left: 2px solid #eee;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .activity-item:before {
+            content: '';
+            position: absolute;
+            left: -0.6rem;
+            top: 0.75rem;
+            width: 0.8rem;
+            height: 0.8rem;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+        }
+
+        .activity-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-content p {
+            font-size: 0.8rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .documents-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .table-header,
+            .document-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+
+            .document-name {
+                grid-column: 1 / -1;
+            }
+
+            .document-date,
+            .document-size,
+            .document-status,
+            .document-actions {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title h1 {
+                font-size: 1.4rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn" onclick="window.location.href='cliente_home.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver</span>
+            </button>
+            <div class="logo">Gestoría Galiano</div>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">LT</div>
+            <div>
+                <div style="font-size: 0.9rem;">Lucas Torres</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1>Portal Documental</h1>
+            <p>Gestiona y organiza todos tus documentos en un solo lugar</p>
+        </div>
+
+        <!-- Documents Layout -->
+        <div class="documents-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-title">
+                    <span>Mis Carpetas</span>
+                    <button class="action-btn" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <div class="folder-list">
+                    <div class="folder-item active" onclick="loadFolder('all')">
+                        <i class="folder-icon fas fa-folder-open"></i>
+                        <span class="folder-name">Todos los documentos</span>
+                        <span class="folder-count">12</span>
+                    </div>
+
+                    <div class="folder-item" onclick="loadFolder('fiscal')">
+                        <i class="folder-icon fas fa-folder"></i>
+                        <span class="folder-name">Fiscal</span>
+                        <span class="folder-count">5</span>
+                    </div>
+
+                    <div class="folder-item" onclick="loadFolder('laboral')">
+                        <i class="folder-icon fas fa-folder"></i>
+                        <span class="folder-name">Laboral</span>
+                        <span class="folder-count">2</span>
+                    </div>
+
+                    <div class="folder-item" onclick="loadFolder('contable')">
+                        <i class="folder-icon fas fa-folder"></i>
+                        <span class="folder-name">Contable</span>
+                        <span class="folder-count">3</span>
+                    </div>
+
+                    <div class="folder-item" onclick="loadFolder('contratos')">
+                        <i class="folder-icon fas fa-folder"></i>
+                        <span class="folder-name">Contratos</span>
+                        <span class="folder-count">1</span>
+                    </div>
+
+                    <div class="folder-item" onclick="loadFolder('facturas')">
+                        <i class="folder-icon fas fa-folder"></i>
+                        <span class="folder-name">Facturas</span>
+                        <span class="folder-count">4</span>
+                    </div>
+                </div>
+
+                <button class="new-folder-btn" onclick="openNewFolderModal()">
+                    <i class="fas fa-plus"></i>
+                    <span>Nueva Carpeta</span>
+                </button>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Todos los documentos</h2>
+                    <div class="content-actions">
+                        <button class="btn" onclick="document.getElementById('file-upload').click()">
+                            <i class="fas fa-upload"></i>
+                            <span>Subir Documento</span>
+                        </button>
+                        <input type="file" id="file-upload" style="display: none;" multiple>
+                    </div>
+                </div>
+
+                <div class="breadcrumbs">
+                    <i class="fas fa-home"></i>
+                    <span>></span>
+                    <span>Todos los documentos</span>
+                </div>
+
+                <div class="document-table">
+                    <div class="table-header">
+                        <div>Nombre</div>
+                        <div>Fecha</div>
+                        <div>Tamaño</div>
+                        <div>Estado</div>
+                        <div>Acciones</div>
+                    </div>
+
+                    <div class="table-body" id="document-table-body">
+                        <!-- Document Row 1 -->
+                        <div class="document-row">
+                            <div class="document-name">
+                                <i class="document-icon fas fa-file-pdf"></i>
+                                <div>
+                                    <div class="document-file-name">declaracion_trimestral_q1_2026.pdf</div>
+                                </div>
+                            </div>
+                            <div class="document-date">28/03/2026</div>
+                            <div class="document-size">1.2 MB</div>
+                            <div class="document-status">
+                                <span class="status-badge status-received">Recibido</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" title="Descargar" onclick="downloadDocument('declaracion_trimestral_q1_2026.pdf')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Ver detalles" onclick="openDocumentPreview('declaracion_trimestral_q1_2026.pdf')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Compartir" onclick="shareDocument('declaracion_trimestral_q1_2026.pdf')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Document Row 2 -->
+                        <div class="document-row">
+                            <div class="document-name">
+                                <i class="document-icon fas fa-file-pdf"></i>
+                                <div>
+                                    <div class="document-file-name">recibo_autonomos_marzo_2026.pdf</div>
+                                </div>
+                            </div>
+                            <div class="document-date">25/03/2026</div>
+                            <div class="document-size">850 KB</div>
+                            <div class="document-status">
+                                <span class="status-badge status-sent">Enviado</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" title="Descargar" onclick="downloadDocument('recibo_autonomos_marzo_2026.pdf')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Ver detalles" onclick="openDocumentPreview('recibo_autonomos_marzo_2026.pdf')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Compartir" onclick="shareDocument('recibo_autonomos_marzo_2026.pdf')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Document Row 3 -->
+                        <div class="document-row">
+                            <div class="document-name">
+                                <i class="document-icon fas fa-file-word"></i>
+                                <div>
+                                    <div class="document-file-name">contrato_proveedor_abc.docx</div>
+                                </div>
+                            </div>
+                            <div class="document-date">15/03/2026</div>
+                            <div class="document-size">45 KB</div>
+                            <div class="document-status">
+                                <span class="status-badge status-received">Recibido</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" title="Descargar" onclick="downloadDocument('contrato_proveedor_abc.docx')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Ver detalles" onclick="openDocumentPreview('contrato_proveedor_abc.docx')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Compartir" onclick="shareDocument('contrato_proveedor_abc.docx')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Document Row 4 -->
+                        <div class="document-row">
+                            <div class="document-name">
+                                <i class="document-icon fas fa-file-excel"></i>
+                                <div>
+                                    <div class="document-file-name">facturas_2025.xlsx</div>
+                                </div>
+                            </div>
+                            <div class="document-date">10/02/2026</div>
+                            <div class="document-size">2.1 MB</div>
+                            <div class="document-status">
+                                <span class="status-badge status-sent">Enviado</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" title="Descargar" onclick="downloadDocument('facturas_2025.xlsx')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Ver detalles" onclick="openDocumentPreview('facturas_2025.xlsx')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Compartir" onclick="shareDocument('facturas_2025.xlsx')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Document Row 5 -->
+                        <div class="document-row">
+                            <div class="document-name">
+                                <i class="document-icon fas fa-file-pdf"></i>
+                                <div>
+                                    <div class="document-file-name">declaracion_iva_2025.pdf</div>
+                                </div>
+                            </div>
+                            <div class="document-date">05/01/2026</div>
+                            <div class="document-size">1.8 MB</div>
+                            <div class="document-status">
+                                <span class="status-badge status-received">Recibido</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" title="Descargar" onclick="downloadDocument('declaracion_iva_2025.pdf')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" title="Ver detalles" onclick="openDocumentPreview('declaracion_iva_2025.pdf')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Compartir" onclick="shareDocument('declaracion_iva_2025.pdf')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Arrastra archivos aquí o haz clic para subir</div>
+                        <div class="upload-hint">Formatos permitidos: PDF, DOC, XLS, JPG, PNG (máx. 20MB por archivo)</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Folder Modal -->
+    <div class="modal-overlay" id="newFolderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Crear Nueva Carpeta</h3>
+                <button class="modal-close" onclick="closeModal('newFolderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="folderName">Nombre de la carpeta</label>
+                    <input type="text" id="folderName" class="form-input" placeholder="Ej: Facturas 2026">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="folderLocation">Ubicación</label>
+                    <select id="folderLocation" class="form-input form-select">
+                        <option>Raíz (nivel principal)</option>
+                        <option>Dentro de "Fiscal"</option>
+                        <option>Dentro de "Contable"</option>
+                        <option>Dentro de "Laboral"</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Compartir con</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="shareWithGestor" checked>
+                            <label for="shareWithGestor">Mi gestor asignado</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="shareWithEquipo">
+                            <label for="shareWithEquipo">Equipo de contabilidad</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('newFolderModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createNewFolder()">Crear Carpeta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div class="modal-overlay" id="documentPreviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewModalTitle">Detalles del Documento</h3>
+                <button class="modal-close" onclick="closeModal('documentPreviewModal')">&times;</button>
+            </div>
+            <div class="modal-body document-preview-content">
+                <div class="document-icon-large">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h4 id="previewDocumentName" style="margin-bottom: 0.5rem; color: var(--primary-color);">declaracion_trimestral_q1_2026.pdf</h4>
+                <div style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem;">PDF • 1.2 MB</div>
+
+                <div class="document-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Fecha de subida</div>
+                        <div class="meta-value" id="previewDocumentDate">28/03/2026 14:30</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Estado</div>
+                        <div class="meta-value">
+                            <span id="previewDocumentStatus" class="status-badge status-received">Recibido</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Categoría</div>
+                        <div class="meta-value" id="previewDocumentCategory">Fiscal</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Subido por</div>
+                        <div class="meta-value" id="previewDocumentUploader">Gestoría Galiano</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <div style="padding: 0.75rem; background-color: #f9f9f9; border-radius: var(--border-radius); min-height: 80px;">
+                        <p id="previewDocumentDescription">Declaración trimestral Q1 2026 con todos los ajustes aplicados según la normativa vigente.</p>
+                    </div>
+                </div>
+
+                <div style="margin: 1.5rem 0;">
+                    <h4 style="margin-bottom: 1rem; color: var(--primary-color); font-size: 1rem;">Acciones recientes</h4>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-avatar">AG</div>
+                            <div class="activity-content">
+                                <h4>Ana García</h4>
+                                <p>Revisó y aprobó el documento • 29/03/2026 10:15</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar">LT</div>
+                            <div class="activity-content">
+                                <h4>Tú</h4>
+                                <p>Subiste el documento • 28/03/2026 14:30</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="downloadFromPreview()">
+                    <i class="fas fa-download"></i> Descargar Documento
+                </button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('documentPreviewModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Document Modal -->
+    <div class="modal-overlay" id="shareDocumentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="shareModalTitle">Compartir Documento</h3>
+                <button class="modal-close" onclick="closeModal('shareDocumentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 0.75rem;">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h4 id="shareDocumentName" style="color: var(--primary-color);">declaracion_trimestral_q1_2026.pdf</h4>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="shareRecipients">Destinatarios</label>
+                    <select id="shareRecipients" class="form-input form-select" multiple>
+                        <option value="ana.garcia">Ana García (Asesora Fiscal)</option>
+                        <option value="carlos.martinez">Carlos Martínez (Contabilidad)</option>
+                        <option value="laura.gomez">Laura Gómez (Asistente)</option>
+                    </select>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">Mantén presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples destinatarios</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="shareMessage">Mensaje (opcional)</label>
+                    <textarea id="shareMessage" class="form-input form-textarea" placeholder="Añade un mensaje para los destinatarios..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de compartición</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="shareNotifyEmail" checked>
+                            <label for="shareNotifyEmail">Notificar por email</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="shareNotifyApp" checked>
+                            <label for="shareNotifyApp">Notificar en la aplicación</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="shareSetExpiry">
+                            <label for="shareSetExpiry">Establecer fecha de caducidad</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="shareExpiryDate" style="display: none; margin-top: 1rem;">
+                    <label class="form-label" for="shareExpiryInput">Fecha de caducidad</label>
+                    <input type="date" id="shareExpiryInput" class="form-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('shareDocumentModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="confirmShareDocument()">Compartir Documento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para cargar una carpeta
+        function loadFolder(folderId) {
+            // Remover clase active de todos los elementos
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Añadir clase active al elemento seleccionado
+            event.currentTarget.classList.add('active');
+
+            // Actualizar título y breadcrumbs según la carpeta
+            const folderNames = {
+                'all': 'Todos los documentos',
+                'fiscal': 'Documentos Fiscales',
+                'laboral': 'Documentos Laborales',
+                'contable': 'Documentos Contables',
+                'contratos': 'Contratos',
+                'facturas': 'Facturas'
+            };
+
+            document.querySelector('.content-title').textContent = folderNames[folderId] || 'Todos los documentos';
+
+            const breadcrumbs = document.querySelector('.breadcrumbs');
+            breadcrumbs.innerHTML = `
+                <i class="fas fa-home"></i>
+                <span>></span>
+                <span>${folderNames[folderId] || 'Todos los documentos'}</span>
+            `;
+        }
+
+        // Función para abrir modal de nueva carpeta
+        function openNewFolderModal() {
+            document.getElementById('newFolderModal').style.display = 'flex';
+            document.getElementById('folderName').focus();
+        }
+
+        // Función para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Función para crear nueva carpeta
+        function createNewFolder() {
+            const folderName = document.getElementById('folderName').value.trim();
+
+            if (!folderName) {
+                alert('Por favor, introduce un nombre para la carpeta');
+                return;
+            }
+
+            // Simular creación exitosa
+            alert(`Carpeta "${folderName}" creada con éxito`);
+
+            // Cerrar modal
+            closeModal('newFolderModal');
+
+            // Limpiar formulario
+            document.getElementById('folderName').value = '';
+        }
+
+        // Función para abrir vista previa de documento
+        function openDocumentPreview(documentName) {
+            // Configurar datos del documento según el nombre
+            const documentData = {
+                'declaracion_trimestral_q1_2026.pdf': {
+                    name: 'declaracion_trimestral_q1_2026.pdf',
+                    type: 'PDF',
+                    size: '1.2 MB',
+                    date: '28/03/2026 14:30',
+                    status: 'Recibido',
+                    category: 'Fiscal',
+                    uploader: 'Gestoría Galiano',
+                    description: 'Declaración trimestral Q1 2026 con todos los ajustes aplicados según la normativa vigente.'
+                },
+                'recibo_autonomos_marzo_2026.pdf': {
+                    name: 'recibo_autonomos_marzo_2026.pdf',
+                    type: 'PDF',
+                    size: '850 KB',
+                    date: '25/03/2026 10:40',
+                    status: 'Enviado',
+                    category: 'Fiscal',
+                    uploader: 'Lucas Torres',
+                    description: 'Recibo de autónomos correspondiente al mes de marzo 2026.'
+                },
+                'contrato_proveedor_abc.docx': {
+                    name: 'contrato_proveedor_abc.docx',
+                    type: 'DOCX',
+                    size: '45 KB',
+                    date: '15/03/2026 09:15',
+                    status: 'Recibido',
+                    category: 'Contratos',
+                    uploader: 'Gestoría Galiano',
+                    description: 'Contrato con proveedor ABC para servicios de suministro.'
+                },
+                'facturas_2025.xlsx': {
+                    name: 'facturas_2025.xlsx',
+                    type: 'XLSX',
+                    size: '2.1 MB',
+                    date: '10/02/2026 16:30',
+                    status: 'Enviado',
+                    category: 'Facturas',
+                    uploader: 'Lucas Torres',
+                    description: 'Archivo con todas las facturas emitidas y recibidas durante 2025.'
+                },
+                'declaracion_iva_2025.pdf': {
+                    name: 'declaracion_iva_2025.pdf',
+                    type: 'PDF',
+                    size: '1.8 MB',
+                    date: '05/01/2026 11:20',
+                    status: 'Recibido',
+                    category: 'Fiscal',
+                    uploader: 'Gestoría Galiano',
+                    description: 'Declaración anual de IVA correspondiente al ejercicio 2025.'
+                }
+            };
+
+            const data = documentData[documentName] || documentData['declaracion_trimestral_q1_2026.pdf'];
+
+            // Actualizar modal con los datos del documento
+            document.getElementById('previewModalTitle').textContent = `Detalles: ${data.name}`;
+            document.getElementById('previewDocumentName').textContent = data.name;
+            document.querySelector('.document-icon-large').innerHTML = getFileIcon(data.type, true);
+            document.getElementById('previewDocumentDate').textContent = data.date;
+            document.getElementById('previewDocumentStatus').textContent = data.status;
+            document.getElementById('previewDocumentStatus').className = `status-badge status-${data.status.toLowerCase()}`;
+            document.getElementById('previewDocumentCategory').textContent = data.category;
+            document.getElementById('previewDocumentUploader').textContent = data.uploader;
+            document.getElementById('previewDocumentDescription').textContent = data.description;
+
+            // Mostrar modal
+            document.getElementById('documentPreviewModal').style.display = 'flex';
+        }
+
+        // Función para obtener icono de archivo
+        function getFileIcon(fileType, large = false) {
+            const size = large ? '3rem' : '1.3rem';
+            let icon = '';
+
+            if (fileType === 'PDF' || fileType === 'pdf') {
+                icon = `<i class="fas fa-file-pdf" style="color: #e74c3c; font-size: ${size}"></i>`;
+            } else if (fileType === 'DOCX' || fileType === 'docx' || fileType === 'DOC' || fileType === 'doc') {
+                icon = `<i class="fas fa-file-word" style="color: #2b579a; font-size: ${size}"></i>`;
+            } else if (fileType === 'XLSX' || fileType === 'xlsx' || fileType === 'XLS' || fileType === 'xls') {
+                icon = `<i class="fas fa-file-excel" style="color: #217346; font-size: ${size}"></i>`;
+            } else if (fileType === 'JPG' || fileType === 'jpg' || fileType === 'PNG' || fileType === 'png') {
+                icon = `<i class="fas fa-file-image" style="color: #7b68ee; font-size: ${size}"></i>`;
+            } else if (fileType === 'ZIP' || fileType === 'zip' || fileType === 'RAR' || fileType === 'rar') {
+                icon = `<i class="fas fa-file-archive" style="color: #f4a261; font-size: ${size}"></i>`;
+            } else {
+                icon = `<i class="fas fa-file-alt" style="color: #666; font-size: ${size}"></i>`;
+            }
+
+            return icon;
+        }
+
+        // Función para descargar documento desde la vista previa
+        function downloadFromPreview() {
+            const documentName = document.getElementById('previewDocumentName').textContent;
+            downloadDocument(documentName);
+        }
+
+        // Función para compartir documento
+        function shareDocument(documentName) {
+            // Configurar nombre del documento en el modal
+            document.getElementById('shareModalTitle').textContent = `Compartir: ${documentName}`;
+            document.getElementById('shareDocumentName').textContent = documentName;
+
+            // Mostrar modal
+            document.getElementById('shareDocumentModal').style.display = 'flex';
+
+            // Configurar fecha de caducidad
+            document.getElementById('shareSetExpiry').addEventListener('change', function() {
+                document.getElementById('shareExpiryDate').style.display = this.checked ? 'block' : 'none';
+            });
+        }
+
+        // Función para confirmar compartición de documento
+        function confirmShareDocument() {
+            const recipients = Array.from(document.getElementById('shareRecipients').selectedOptions)
+                .map(option => option.text);
+
+            if (recipients.length === 0) {
+                alert('Por favor, selecciona al menos un destinatario');
+                return;
+            }
+
+            const documentName = document.getElementById('shareDocumentName').textContent;
+            const message = document.getElementById('shareMessage').value;
+            const notifyEmail = document.getElementById('shareNotifyEmail').checked;
+            const notifyApp = document.getElementById('shareNotifyApp').checked;
+            const setExpiry = document.getElementById('shareSetExpiry').checked;
+            const expiryDate = setExpiry ? document.getElementById('shareExpiryInput').value : 'No establecida';
+
+            alert(`Documento "${documentName}" compartido con:\n\n${recipients.join(', ')}\n\nMensaje: ${message || 'Sin mensaje'}\nNotificar por email: ${notifyEmail ? 'Sí' : 'No'}\nNotificar en app: ${notifyApp ? 'Sí' : 'No'}\nCaducidad: ${expiryDate}`);
+
+            // Cerrar modal
+            closeModal('shareDocumentModal');
+
+            // Limpiar formulario
+            document.getElementById('shareMessage').value = '';
+            document.getElementById('shareSetExpiry').checked = false;
+            document.getElementById('shareExpiryDate').style.display = 'none';
+        }
+
+        // Función para descargar documento (simulada)
+        function downloadDocument(documentName) {
+            alert(`Descargando documento: ${documentName}`);
+            // En una implementación real, esto iniciaría la descarga del archivo
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal-overlay[style="display: flex;"]');
+                openModals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

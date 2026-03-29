@@ -1,0 +1,3068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Informes | Gestoría Galiano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #d4af37;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 1001;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            font-size: 0.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-item .menu-text {
+            display: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .menu-icon {
+            font-size: 1.1rem;
+        }
+
+        .menu-text {
+            font-size: 0.9rem;
+        }
+
+        .notification-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Reports Management Container */
+        .reports-management {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Reports Sidebar */
+        .reports-sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            padding: 0 1.25rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quick-action-btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .quick-action-btn.primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .quick-action-btn.secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .search-box {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filters-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+
+        .report-stats {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .report-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .report-item {
+            padding: 0.8rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .report-item:hover {
+            background-color: #f5f7fa;
+        }
+
+        .report-item.active {
+            background-color: #e8f4f8;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .report-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .status-generated {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-error {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Report Detail */
+        .report-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .detail-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .detail-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .detail-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .detail-action-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .detail-meta {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .detail-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .detail-tag {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .tag-fiscal {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .tag-laboral {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .tag-contable {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .tag-urgent {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .tag-client {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .report-detail-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .report-preview {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .preview-icon {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .report-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-group {
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .report-description {
+            margin-bottom: 2rem;
+        }
+
+        .report-description h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .description-content {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            line-height: 1.5;
+        }
+
+        /* Report Content */
+        .report-content {
+            margin-bottom: 2rem;
+        }
+
+        .content-preview {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        /* Report Charts */
+        .report-charts {
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background-color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        /* Report Footer Actions */
+        .report-footer {
+            padding: 1.25rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            background-color: white;
+        }
+
+        .footer-action-btn {
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .footer-action-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .footer-action-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.75rem;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999999'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border: none;
+        }
+
+        .modal-btn-secondary {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        /* User Selector */
+        .user-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-tag {
+            background-color: #f0f0f0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Report Properties Modal */
+        .report-properties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .property-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .property-group h4 {
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .property-label {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .property-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* Timeline Visualization */
+        .timeline-container {
+            position: relative;
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #eee;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -0.75rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+        }
+
+        .timeline-content {
+            background-color: #f9f9f9;
+            padding: 0.8rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-description {
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .menu-text {
+                display: none;
+            }
+
+            .reports-management {
+                flex-direction: column;
+            }
+
+            .reports-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .report-properties {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+
+            .report-detail-content {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">Gestoría Galiano</div>
+        </div>
+        <div class="user-profile" onclick="toggleUserDropdown()">
+            <div class="user-avatar">AG</div>
+            <div>
+                <div style="font-size: 0.9rem;">Ana García</div>
+                <div style="font-size: 0.8rem; color: #ccc;">Asesora Fiscal</div>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Gestoría Galiano</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='gestoria_dashboard.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="menu-text">Dashboard</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_comunicacion.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="menu-text">Comunicación</div>
+                    <div class="notification-badge">3</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_tareas.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="menu-text">Tareas</div>
+                    <div class="notification-badge">8</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_documentos.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div class="menu-text">Documentos</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_correo.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="menu-text">Correo</div>
+                    <div class="notification-badge">12</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='gestoria_notificaciones.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">Notificaciones</div>
+                    <div class="notification-badge">5</div>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='gestoria_informes.html'">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="menu-text">Informes</div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Reports Management -->
+            <div class="reports-management">
+                <!-- Reports Sidebar -->
+                <aside class="reports-sidebar">
+                    <div class="sidebar-header">
+                        <h3 class="sidebar-title">Gestión de Informes</h3>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action-btn primary" onclick="openNewReportModal()">
+                            <i class="fas fa-plus"></i>
+                            <span>Nuevo Informe</span>
+                        </button>
+                        <button class="quick-action-btn secondary" onclick="openTemplateModal()">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Plantillas</span>
+                        </button>
+                        <button class="quick-action-btn secondary">
+                            <i class="fas fa-filter"></i>
+                            <span>Filtros Avanzados</span>
+                        </button>
+                    </div>
+
+                    <div class="search-box">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Buscar informes..." oninput="filterReports()">
+                        </div>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo de informe</label>
+                            <select class="filter-select" onchange="filterReports()">
+                                <option value="">Todos</option>
+                                <option value="fiscal">Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="clientes">Clientes</option>
+                                <option value="actividad">Actividad</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Estado</label>
+                            <select class="filter-select" onchange="filterReports()">
+                                <option value="">Todos</option>
+                                <option value="generated">Generado</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="error">Error</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Periodo</label>
+                            <select class="filter-select" onchange="filterReports()">
+                                <option value="">Todos</option>
+                                <option value="week">Última semana</option>
+                                <option value="month">Último mes</option>
+                                <option value="quarter">Último trimestre</option>
+                                <option value="year">Último año</option>
+                            </select>
+                        </div>
+
+                        <button class="quick-action-btn secondary" style="width: 100%; margin-top: 0.75rem;" onclick="applyFilters()">
+                            <i class="fas fa-search"></i>
+                            <span>Aplicar Filtros</span>
+                        </button>
+                    </div>
+
+                    <div class="report-stats">
+                        <h4 style="margin-bottom: 0.75rem; font-size: 1rem; color: var(--primary-color);">Estadísticas</h4>
+                        <div class="stat-item">
+                            <span class="stat-label">Informes totales</span>
+                            <span class="stat-value">42</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Generados</span>
+                            <span class="stat-value">32</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Pendientes</span>
+                            <span class="stat-value">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Con errores</span>
+                            <span class="stat-value" style="color: var(--danger-color);">2</span>
+                        </div>
+                    </div>
+
+                    <div class="report-list">
+                        <div class="report-item active" onclick="loadReport('resumen-fiscal-q1-2026')">
+                            <div class="report-header">
+                                <div class="report-title">Resumen Fiscal Q1 2026</div>
+                                <div class="report-status status-generated">Generado</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0412</span>
+                                <span>12/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Ana García • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('actividad-clientes-marzo')">
+                            <div class="report-header">
+                                <div class="report-title">Actividad de Clientes - Marzo 2026</div>
+                                <div class="report-status status-generated">Generado</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0410</span>
+                                <span>10/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Carlos Martínez • <i class="fas fa-tag"></i> Clientes
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('laboral-trimestral')">
+                            <div class="report-header">
+                                <div class="report-title">Informe Laboral Trimestral</div>
+                                <div class="report-status status-pending">Pendiente</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0408</span>
+                                <span>08/04/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Javier Rodríguez • <i class="fas fa-tag"></i> Laboral
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('contable-anual-2025')">
+                            <div class="report-header">
+                                <div class="report-title">Cierre Contable Anual 2025</div>
+                                <div class="report-status status-generated">Generado</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0328</span>
+                                <span>28/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Laura Gómez • <i class="fas fa-tag"></i> Contable
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('productividad-equipo')">
+                            <div class="report-header">
+                                <div class="report-title">Productividad del Equipo Q1 2026</div>
+                                <div class="report-status status-generated">Generado</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0325</span>
+                                <span>25/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Pablo Ruiz • <i class="fas fa-tag"></i> Actividad
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('declaraciones-pendientes')">
+                            <div class="report-header">
+                                <div class="report-title">Declaraciones Pendientes</div>
+                                <div class="report-status status-pending">Pendiente</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0320</span>
+                                <span>20/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Ana García • <i class="fas fa-tag"></i> Fiscal
+                            </div>
+                        </div>
+
+                        <div class="report-item" onclick="loadReport('clientes-inactivos')">
+                            <div class="report-header">
+                                <div class="report-title">Clientes Inactivos 2025</div>
+                                <div class="report-status status-generated">Generado</div>
+                            </div>
+                            <div class="report-meta">
+                                <span>#INF-2026-0315</span>
+                                <span>15/03/2026</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #666;">
+                                <i class="fas fa-user"></i> Carlos Martínez • <i class="fas fa-tag"></i> Clientes
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Report Detail -->
+                <div class="report-detail">
+                    <div class="detail-header">
+                        <h3 class="detail-title">Resumen Fiscal Q1 2026</h3>
+                        <div class="detail-actions">
+                            <button class="detail-action-btn" title="Descargar PDF" onclick="downloadReportPDF()">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Enviar por email" onclick="sendReportEmail()">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Compartir" onclick="shareReport()">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Editar" onclick="openEditReportModal()">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Imprimir" onclick="printReport()">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button class="detail-action-btn" title="Más opciones">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="detail-meta">
+                        <div>
+                            <span style="margin-right: 1rem;"><strong>ID:</strong> #INF-2026-0412</span>
+                            <span style="margin-right: 1rem;"><strong>Fecha:</strong> 12/04/2026</span>
+                            <span><strong>Generado por:</strong> Ana García</span>
+                        </div>
+                        <div class="detail-tags">
+                            <span class="detail-tag tag-fiscal">Fiscal</span>
+                            <span class="detail-tag tag-client">Clientes</span>
+                        </div>
+                    </div>
+
+                    <div class="report-detail-content">
+                        <div class="report-section">
+                            <h4 class="section-title">Información del Informe</h4>
+                            <div class="report-preview">
+                                <div class="preview-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div style="text-align: center; margin-bottom: 1rem;">
+                                    <h4 style="color: var(--primary-color);">Resumen Fiscal Q1 2026</h4>
+                                    <p style="color: #666;">Informe trimestral de actividad fiscal</p>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">42</div>
+                                        <div style="font-size: 0.8rem; color: #666;">Clientes</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">128</div>
+                                        <div style="font-size: 0.8rem; color: #666;">Declaraciones</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">€45,280</div>
+                                        <div style="font-size: 0.8rem; color: #666;">Base imponible</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-info">
+                            <div class="info-group">
+                                <div class="info-label">Información básica</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>ID de informe:</strong> #INF-2026-0412
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Tipo:</strong> Resumen fiscal trimestral
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Periodo:</strong> Q1 2026 (Enero - Marzo)
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Fecha de generación:</strong> 12/04/2026 10:45
+                                    </div>
+                                    <div>
+                                        <strong>Generado por:</strong> Ana García
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-group">
+                                <div class="info-label">Parámetros</div>
+                                <div class="info-value">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Clientes incluidos:</strong> 42
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Declaraciones procesadas:</strong> 128
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Base imponible total:</strong> €45,280.50
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>IVA repercutido:</strong> €9,508.91
+                                    </div>
+                                    <div>
+                                        <strong>IVA soportado:</strong> €7,244.88
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-description">
+                            <h4>Descripción</h4>
+                            <div class="description-content">
+                                <p>Informe trimestral que resume la actividad fiscal de todos los clientes de la gestoría durante el primer trimestre de 2026. Incluye:</p>
+                                <ul>
+                                    <li>Resumen de declaraciones presentadas</li>
+                                    <li>Análisis de bases imponibles por tipo de cliente</li>
+                                    <li>Comparativa con el mismo periodo del año anterior</li>
+                                    <li>Identificación de clientes con declaraciones pendientes</li>
+                                    <li>Recomendaciones para el próximo trimestre</li>
+                                </ul>
+                                <p>Este informe se genera automáticamente cada trimestre y se utiliza para:</p>
+                                <ul>
+                                    <li>Evaluar el cumplimiento fiscal de los clientes</li>
+                                    <li>Identificar oportunidades de optimización fiscal</li>
+                                    <li>Planificar acciones para el próximo trimestre</li>
+                                    <li>Detectar clientes que necesitan atención especial</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="report-content">
+                            <h4 class="section-title">Resumen Ejecutivo</h4>
+                            <div class="content-preview">
+                                <h5 style="color: var(--primary-color); margin-bottom: 1rem;">Principales conclusiones:</h5>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">1. Cumplimiento general</h6>
+                                    <p style="margin-bottom: 0.5rem;">El 92% de los clientes han presentado sus declaraciones trimestrales a tiempo, lo que representa una mejora del 5% respecto al mismo periodo del año anterior.</p>
+                                    <div style="background-color: #e8f5e8; padding: 0.5rem; border-radius: 4px; color: var(--success-color); font-size: 0.9rem;">
+                                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                                        8 clientes con declaraciones pendientes (vs. 15 en Q1 2025)
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">2. Base imponible</h6>
+                                    <p style="margin-bottom: 0.5rem;">La base imponible total ha aumentado un 8.3% respecto al mismo trimestre del año anterior, pasando de €41,800 a €45,280.</p>
+                                    <div style="background-color: #e3f2fd; padding: 0.5rem; border-radius: 4px; color: var(--accent-color); font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                                        Este aumento se debe principalmente a 3 clientes que han incrementado su facturación en más del 30%
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">3. IVA</h6>
+                                    <p style="margin-bottom: 0.5rem;">El IVA repercutido ha aumentado en línea con la base imponible, manteniendo un tipo medio del 21%. El IVA soportado ha disminuido ligeramente debido a la optimización de gastos deducibles.</p>
+                                    <div style="background-color: #fff3e0; padding: 0.5rem; border-radius: 4px; color: var(--warning-color); font-size: 0.9rem;">
+                                        <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                                        2 clientes presentan desequilibrios significativos entre IVA repercutido y soportado
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">4. Retenciones</h6>
+                                    <p style="margin-bottom: 0.5rem;">Las retenciones practicadas a profesionales han aumentado un 12% debido al incremento de la base de cotización de los autónomos.</p>
+                                </div>
+
+                                <div>
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">5. Recomendaciones</h6>
+                                    <ul>
+                                        <li>Contactar con los 8 clientes con declaraciones pendientes antes del 20/04/2026</li>
+                                        <li>Revisar la situación de los 2 clientes con desequilibrios de IVA</li>
+                                        <li>Programar reuniones con los 3 clientes que han incrementado su facturación para optimizar su planificación fiscal</li>
+                                        <li>Enviar recordatorio general sobre el próximo plazo de declaración (modelo 130 para Q2)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-charts">
+                            <h4 class="section-title">Gráficos y Visualizaciones</h4>
+
+                            <div class="chart-container">
+                                <h5 class="chart-title">Declaraciones por Tipo de Cliente</h5>
+                                <div class="chart-placeholder">
+                                    <div style="text-align: center; color: #ccc;">
+                                        <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                        <p>Gráfico de barras: Declaraciones por tipo de cliente</p>
+                                        <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                            <span style="color: var(--secondary-color);">■</span> Autónomos: 78 (61%) •
+                                            <span style="color: var(--accent-color);">■</span> PYMES: 35 (27%) •
+                                            <span style="color: #9b59b6;">■</span> Grandes Empresas: 15 (12%)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <h5 class="chart-title">Base Imponible por Cliente (Top 10)</h5>
+                                <div class="chart-placeholder">
+                                    <div style="text-align: center; color: #ccc;">
+                                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                        <p>Gráfico de líneas: Base imponible de los 10 clientes principales</p>
+                                        <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                            Tendencia: +8.3% vs Q1 2025 • Máximo: €12,450 • Mínimo: €1,850
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <h5 class="chart-title">Comparativa IVA Repercutido vs Soportado</h5>
+                                <div class="chart-placeholder">
+                                    <div style="text-align: center; color: #ccc;">
+                                        <i class="fas fa-chart-pie" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                        <p>Gráfico circular: IVA Repercutido (€9,508.91) vs Soportado (€7,244.88)</p>
+                                        <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                            <span style="color: var(--success-color);">■</span> Repercutido: 56.7% •
+                                            <span style="color: var(--danger-color);">■</span> Soportado: 43.3%
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h4 class="section-title">Clientes Destacados</h4>
+                            <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid #eee;">
+                                            <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Cliente</th>
+                                            <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Base Imponible</th>
+                                            <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">IVA Repercutido</th>
+                                            <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Variación vs 2025</th>
+                                            <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                                            <td style="padding: 0.5rem;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">Empresa XYZ, S.L.</div>
+                                                <div style="font-size: 0.7rem; color: #666;">B12345678</div>
+                                            </td>
+                                            <td style="padding: 0.5rem;">€12,450.00</td>
+                                            <td style="padding: 0.5rem;">€2,614.50</td>
+                                            <td style="padding: 0.5rem; color: var(--success-color);">+32.4%</td>
+                                            <td style="padding: 0.5rem;">
+                                                <span style="background-color: var(--success-color); color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">Al día</span>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                                            <td style="padding: 0.5rem;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">Construcciones SL</div>
+                                                <div style="font-size: 0.7rem; color: #666;">B87654321</div>
+                                            </td>
+                                            <td style="padding: 0.5rem;">€9,850.00</td>
+                                            <td style="padding: 0.5rem;">€2,068.50</td>
+                                            <td style="padding: 0.5rem; color: var(--success-color);">+18.7%</td>
+                                            <td style="padding: 0.5rem;">
+                                                <span style="background-color: var(--success-color); color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">Al día</span>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                                            <td style="padding: 0.5rem;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">Industrias 123, S.A.</div>
+                                                <div style="font-size: 0.7rem; color: #666;">A12345678</div>
+                                            </td>
+                                            <td style="padding: 0.5rem;">€8,720.00</td>
+                                            <td style="padding: 0.5rem;">€1,831.20</td>
+                                            <td style="padding: 0.5rem; color: var(--danger-color);">-4.2%</td>
+                                            <td style="padding: 0.5rem;">
+                                                <span style="background-color: var(--warning-color); color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">Pendiente</span>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                                            <td style="padding: 0.5rem;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">Lucas Torres</div>
+                                                <div style="font-size: 0.7rem; color: #666;">12345678A</div>
+                                            </td>
+                                            <td style="padding: 0.5rem;">€4,250.00</td>
+                                            <td style="padding: 0.5rem;">€892.50</td>
+                                            <td style="padding: 0.5rem; color: var(--success-color);">+15.3%</td>
+                                            <td style="padding: 0.5rem;">
+                                                <span style="background-color: var(--success-color); color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">Al día</span>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                                            <td style="padding: 0.5rem;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">Comercio Rápido</div>
+                                                <div style="font-size: 0.7rem; color: #666;">12345678B</div>
+                                            </td>
+                                            <td style="padding: 0.5rem;">€3,850.00</td>
+                                            <td style="padding: 0.5rem;">€808.50</td>
+                                            <td style="padding: 0.5rem; color: var(--success-color);">+8.7%</td>
+                                            <td style="padding: 0.5rem;">
+                                                <span style="background-color: var(--success-color); color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">Al día</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h4 class="section-title">Acciones Recomendadas</h4>
+                            <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones inmediatas:</h5>
+                                    <ol style="margin-left: 1.5rem;">
+                                        <li>Contactar con Industrias 123, S.A. para resolver la declaración pendiente antes del 20/04/2026</li>
+                                        <li>Revisar la caída del 4.2% en la base imponible de Industrias 123, S.A.</li>
+                                        <li>Programar reunión con Empresa XYZ, S.L. y Construcciones SL para analizar su crecimiento y oportunidades de optimización fiscal</li>
+                                    </ol>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones a medio plazo:</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Enviar comunicación a todos los clientes recordando el próximo plazo de declaración (modelo 130 para Q2)</li>
+                                        <li>Organizar taller formativo sobre deducciones fiscales para autónomos (mayo 2026)</li>
+                                        <li>Revisar la situación de los 2 clientes con desequilibrios de IVA</li>
+                                    </ul>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Seguimiento:</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Programar recordatorio automático para el 15/07/2026 para generar el informe de Q2</li>
+                                        <li>Revisar el impacto de los cambios en la normativa de IVA 2026 en el próximo informe</li>
+                                        <li>Actualizar las plantillas de declaraciones según los nuevos requisitos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h4 class="section-title">Anexos</h4>
+                            <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                                <div style="margin-bottom: 1rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Documentos adjuntos:</h5>
+                                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background-color: white; border-radius: 4px; border: 1px solid #eee;">
+                                            <div style="color: var(--secondary-color); font-size: 1.2rem;">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">INF-2026-Q1-ResumenFiscal.pdf</div>
+                                                <div style="font-size: 0.8rem; color: #666;">Informe completo en formato PDF • 1.2MB</div>
+                                            </div>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Descargar">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Vista previa">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background-color: white; border-radius: 4px; border: 1px solid #eee;">
+                                            <div style="color: var(--accent-color); font-size: 1.2rem;">
+                                                <i class="fas fa-file-excel"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">INF-2026-Q1-DatosFiscales.xlsx</div>
+                                                <div style="font-size: 0.8rem; color: #666;">Datos en bruto para análisis • 450KB</div>
+                                            </div>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Descargar">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Vista previa">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background-color: white; border-radius: 4px; border: 1px solid #eee;">
+                                            <div style="color: #9b59b6; font-size: 1.2rem;">
+                                                <i class="fas fa-file-alt"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 500; color: var(--primary-color);">INF-2026-Q1-Recomendaciones.txt</div>
+                                                <div style="font-size: 0.8rem; color: #666;">Recomendaciones detalladas • 12KB</div>
+                                            </div>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Descargar">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Vista previa">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 1.5rem;">
+                                    <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Referencias:</h5>
+                                    <ul style="margin-left: 1.5rem;">
+                                        <li>Normativa aplicable: Ley 35/2006 (IRPF), Ley 37/1992 (IVA)</li>
+                                        <li>Fuentes de datos: Sistema interno de gestoría, AEAT, Seguridad Social</li>
+                                        <li>Metodología: Análisis comparativo con mismo periodo del año anterior</li>
+                                        <li>Próxima actualización: 15/07/2026 (Q2 2026)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-footer">
+                        <button class="footer-action-btn footer-action-primary" onclick="downloadReportPDF()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Descargar PDF</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-primary" onclick="sendReportEmail()">
+                            <i class="fas fa-envelope"></i>
+                            <span>Enviar por Email</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="shareReport()">
+                            <i class="fas fa-share-alt"></i>
+                            <span>Compartir</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="printReport()">
+                            <i class="fas fa-print"></i>
+                            <span>Imprimir</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="openEditReportModal()">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar</span>
+                        </button>
+                        <button class="footer-action-btn footer-action-secondary" onclick="generateSimilarReport()">
+                            <i class="fas fa-copy"></i>
+                            <span>Generar Similar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Report Modal -->
+    <div class="modal-overlay" id="newReportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo Informe</h3>
+                <button class="modal-close" onclick="closeModal('newReportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="newReportTitle">Título del informe</label>
+                    <input type="text" id="newReportTitle" class="form-input" placeholder="Ej: Resumen Fiscal Q1 2026">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newReportType">Tipo de informe</label>
+                            <select id="newReportType" class="form-input form-select">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="fiscal" selected>Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="clientes">Clientes</option>
+                                <option value="actividad">Actividad</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newReportPeriod">Periodo</label>
+                            <select id="newReportPeriod" class="form-input form-select">
+                                <option value="">Seleccionar periodo</option>
+                                <option value="week">Última semana</option>
+                                <option value="month">Último mes</option>
+                                <option value="quarter" selected>Último trimestre</option>
+                                <option value="year">Último año</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newReportStartDate">Fecha inicio</label>
+                            <input type="date" id="newReportStartDate" class="form-input" value="2026-01-01">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="newReportEndDate">Fecha fin</label>
+                            <input type="date" id="newReportEndDate" class="form-input" value="2026-03-31">
+                        </div>
+                    </div>
+                </div>
+
+<div class="form-group">
+                    <label class="form-label" for="newReportDescription">Descripción</label>
+                    <textarea id="newReportDescription" class="form-input form-textarea" placeholder="Descripción del contenido y propósito del informe...">Informe trimestral que resume la actividad fiscal de todos los clientes de la gestoría. Incluye análisis de bases imponibles, IVA, retenciones y comparativa con el mismo periodo del año anterior.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Parámetros del informe</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="includeAllClients" checked>
+                            <label for="includeAllClients">Incluir todos los clientes</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="comparePreviousPeriod">
+                            <label for="comparePreviousPeriod">Comparar con periodo anterior</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="includeCharts" checked>
+                            <label for="includeCharts">Incluir gráficos y visualizaciones</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="includeRecommendations" checked>
+                            <label for="includeRecommendations">Incluir recomendaciones</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Clientes específicos (opcional)</label>
+                    <div class="user-selector" onclick="openClientSelector()">
+                        <i class="fas fa-users"></i>
+                        <span>Seleccionar clientes específicos</span>
+                    </div>
+                    <div class="selected-users" id="selectedClients">
+                        <!-- Los clientes seleccionados aparecerán aquí -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de generación</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="generatePDF" checked>
+                            <label for="generatePDF">Generar PDF</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="generateExcel">
+                            <label for="generateExcel">Generar Excel con datos</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="notifyCompletion">
+                            <label for="notifyCompletion">Notificar cuando esté listo</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="scheduleGeneration">
+                            <label for="scheduleGeneration">Programar generación</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="scheduleGroup" style="display: none;">
+                    <label class="form-label" for="scheduleDate">Fecha y hora de generación</label>
+                    <input type="datetime-local" id="scheduleDate" class="form-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('newReportModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="createReport()">Generar Informe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Modal -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Plantillas de Informes</h3>
+                <button class="modal-close" onclick="closeModal('templateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-box" style="margin-bottom: 1.5rem;">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="templateSearch" class="search-input" placeholder="Buscar plantillas..." oninput="filterTemplates()">
+                    </div>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 1.5rem;">
+                    <label class="filter-label">Categoría</label>
+                    <select id="templateCategory" class="filter-select" onchange="filterTemplates()">
+                        <option value="">Todas</option>
+                        <option value="fiscal">Fiscal</option>
+                        <option value="laboral">Laboral</option>
+                        <option value="contable">Contable</option>
+                        <option value="clientes">Clientes</option>
+                        <option value="actividad">Actividad</option>
+                    </select>
+                </div>
+
+                <div style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('resumen-fiscal-trimestral')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--secondary-color);">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Resumen Fiscal Trimestral</div>
+                                <div style="font-size: 0.8rem; color: #666;">Informe estándar de actividad fiscal trimestral</div>
+                            </div>
+                            <div style="background-color: var(--secondary-color); color: var(--dark-color); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Fiscal</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('actividad-clientes')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent-color);">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Actividad de Clientes</div>
+                                <div style="font-size: 0.8rem; color: #666;">Resumen de interacciones y actividad por cliente</div>
+                            </div>
+                            <div style="background-color: var(--accent-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Clientes</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('laboral-trimestral')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #4caf50;">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Informe Laboral Trimestral</div>
+                                <div style="font-size: 0.8rem; color: #666;">Análisis de nóminas, altas/bajas y cotizaciones</div>
+                            </div>
+                            <div style="background-color: #4caf50; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Laboral</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('contable-anual')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9b59b6;">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Cierre Contable Anual</div>
+                                <div style="font-size: 0.8rem; color: #666;">Informe completo de cierre contable anual</div>
+                            </div>
+                            <div style="background-color: #9b59b6; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Contable</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('productividad-equipo')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ff9800;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Productividad del Equipo</div>
+                                <div style="font-size: 0.8rem; color: #666;">Métricas de productividad y carga de trabajo</div>
+                            </div>
+                            <div style="background-color: #ff9800; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Actividad</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('declaraciones-pendientes')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #f44336;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Declaraciones Pendientes</div>
+                                <div style="font-size: 0.8rem; color: #666;">Lista de declaraciones con plazos vencidos o próximos</div>
+                            </div>
+                            <div style="background-color: #f44336; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Fiscal</div>
+                        </div>
+                    </div>
+
+                    <div class="report-item" style="margin-bottom: 0.75rem; cursor: pointer;" onclick="selectTemplate('clientes-inactivos')">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background-color: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #9e9e9e;">
+                                <i class="fas fa-user-slash"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--primary-color);">Clientes Inactivos</div>
+                                <div style="font-size: 0.8rem; color: #666;">Análisis de clientes sin actividad reciente</div>
+                            </div>
+                            <div style="background-color: #9e9e9e; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Clientes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('templateModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="useSelectedTemplate()">Usar Plantilla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Report Modal -->
+    <div class="modal-overlay" id="editReportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Editar Informe: Resumen Fiscal Q1 2026</h3>
+                <button class="modal-close" onclick="closeModal('editReportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="editReportTitle">Título del informe</label>
+                    <input type="text" id="editReportTitle" class="form-input" value="Resumen Fiscal Q1 2026">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editReportType">Tipo de informe</label>
+                            <select id="editReportType" class="form-input form-select">
+                                <option value="fiscal" selected>Fiscal</option>
+                                <option value="laboral">Laboral</option>
+                                <option value="contable">Contable</option>
+                                <option value="clientes">Clientes</option>
+                                <option value="actividad">Actividad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editReportStatus">Estado</label>
+                            <select id="editReportStatus" class="form-input form-select">
+                                <option value="generated" selected>Generado</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="error">Error</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editReportStartDate">Fecha inicio</label>
+                            <input type="date" id="editReportStartDate" class="form-input" value="2026-01-01">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="editReportEndDate">Fecha fin</label>
+                            <input type="date" id="editReportEndDate" class="form-input" value="2026-03-31">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editReportDescription">Descripción</label>
+                    <textarea id="editReportDescription" class="form-input form-textarea">Informe trimestral que resume la actividad fiscal de todos los clientes de la gestoría durante el primer trimestre de 2026. Incluye análisis de bases imponibles, IVA, retenciones y comparativa con el mismo periodo del año anterior.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Parámetros del informe</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editIncludeAllClients" checked>
+                            <label for="editIncludeAllClients">Incluir todos los clientes</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editComparePreviousPeriod" checked>
+                            <label for="editComparePreviousPeriod">Comparar con periodo anterior</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editIncludeCharts" checked>
+                            <label for="editIncludeCharts">Incluir gráficos y visualizaciones</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editIncludeRecommendations" checked>
+                            <label for="editIncludeRecommendations">Incluir recomendaciones</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Clientes específicos</label>
+                    <div class="user-selector" onclick="openClientSelector()">
+                        <i class="fas fa-users"></i>
+                        <span>42 clientes seleccionados</span>
+                    </div>
+                    <div class="selected-users" id="editSelectedClients">
+                        <div class="user-tag">
+                            <div class="user-avatar" style="width: 1.5rem; height: 1.5rem; font-size: 0.7rem; background-color: #e0e0e0;">LT</div>
+                            Lucas Torres
+                            <button style="background: none; border: none; color: #666; cursor: pointer; margin-left: 0.5rem;" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="user-tag">
+                            <div class="user-avatar" style="width: 1.5rem; height: 1.5rem; font-size: 0.7rem; background-color: #e3f2fd;">🏢</div>
+                            Empresa XYZ
+                            <button style="background: none; border: none; color: #666; cursor: pointer; margin-left: 0.5rem;" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opciones de generación</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editGeneratePDF" checked>
+                            <label for="editGeneratePDF">Generar PDF</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editGenerateExcel" checked>
+                            <label for="editGenerateExcel">Generar Excel con datos</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="editNotifyCompletion">
+                            <label for="editNotifyCompletion">Notificar cuando esté listo</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('editReportModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="saveReportChanges()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Selector Modal -->
+    <div class="modal-overlay" id="clientSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Seleccionar Clientes</h3>
+                <button class="modal-close" onclick="closeModal('clientSelectorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-box" style="margin-bottom: 1.5rem;">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="clientSearch" class="search-input" placeholder="Buscar clientes..." oninput="filterClientsInSelector()">
+                    </div>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 1.5rem;">
+                    <label class="filter-label">Tipo de cliente</label>
+                    <select id="clientTypeFilter" class="filter-select" onchange="filterClientsInSelector()">
+                        <option value="">Todos</option>
+                        <option value="autonomo">Autónomo</option>
+                        <option value="pyme">PYME</option>
+                        <option value="empresa">Gran Empresa</option>
+                        <option value="particular">Particular</option>
+                    </select>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 1.5rem;">
+                    <label class="filter-label">Estado</label>
+                    <select id="clientStatusFilter" class="filter-select" onchange="filterClientsInSelector()">
+                        <option value="">Todos</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                </div>
+
+                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">LT</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Lucas Torres</div>
+                            <div style="font-size: 0.8rem; color: #666;">12345678A • Autónomo</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem; background-color: #e3f2fd;">🏢</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Empresa XYZ, S.L.</div>
+                            <div style="font-size: 0.8rem; color: #666;">B12345678 • PYME</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">ABC</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Autónomo ABC</div>
+                            <div style="font-size: 0.8rem; color: #666;">87654321Z • Autónomo</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem; background-color: #f3e5f5;">🏭</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Industrias 123, S.A.</div>
+                            <div style="font-size: 0.8rem; color: #666;">A12345678 • Gran Empresa</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem;">CR</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Comercio Rápido</div>
+                            <div style="font-size: 0.8rem; color: #666;">12345678B • Autónomo</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; cursor: pointer;" onclick="toggleClientSelection(this)">
+                        <input type="checkbox" style="margin-right: 0.5rem;">
+                        <div class="user-avatar" style="width: 2.25rem; height: 2.25rem; font-size: 0.9rem; background-color: #e8f5e8;">CS</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--primary-color);">Construcciones SL</div>
+                            <div style="font-size: 0.8rem; color: #666;">B87654321 • PYME</div>
+                        </div>
+                        <div style="background-color: var(--success-color); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">Activo</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <div style="font-size: 0.9rem; color: #666;">6 clientes seleccionados</div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button style="background: none; border: 1px solid #ddd; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;" onclick="selectAllClients()">
+                            Seleccionar todos
+                        </button>
+                        <button style="background: none; border: 1px solid #ddd; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;" onclick="deselectAllClients()">
+                            Deseleccionar todos
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('clientSelectorModal')">Cancelar</button>
+                <button class="modal-btn modal-btn-primary" onclick="confirmClientSelection()">Confirmar Selección</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentReportContext = '';
+        let selectedTemplate = null;
+
+        // Función para alternar el sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Función para alternar el dropdown de usuario
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile');
+            const userDropdown = document.getElementById('userDropdown');
+
+            if (!userProfile.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Función para cargar un informe
+        function loadReport(reportId) {
+            // Marcar como seleccionado
+            document.querySelectorAll('.report-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Datos de ejemplo para diferentes informes
+            const reportData = {
+                'resumen-fiscal-q1-2026': {
+                    title: 'Resumen Fiscal Q1 2026',
+                    id: '#INF-2026-0412',
+                    date: '12/04/2026',
+                    generatedBy: 'Ana García',
+                    status: 'Generado',
+                    category: ['Fiscal', 'Clientes'],
+                    description: 'Informe trimestral que resume la actividad fiscal de todos los clientes de la gestoría durante el primer trimestre de 2026.',
+                    stats: {
+                        clients: 42,
+                        declarations: 128,
+                        taxBase: '€45,280.50',
+                        vatCharged: '€9,508.91',
+                        vatPaid: '€7,244.88'
+                    },
+                    content: `
+                        <div class="report-section">
+                            <h4 class="section-title">Resumen Ejecutivo</h4>
+                            <div class="content-preview">
+                                <h5 style="color: var(--primary-color); margin-bottom: 1rem;">Principales conclusiones:</h5>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">1. Cumplimiento general</h6>
+                                    <p style="margin-bottom: 0.5rem;">El 92% de los clientes han presentado sus declaraciones trimestrales a tiempo, lo que representa una mejora del 5% respecto al mismo periodo del año anterior.</p>
+                                    <div style="background-color: #e8f5e8; padding: 0.5rem; border-radius: 4px; color: var(--success-color); font-size: 0.9rem;">
+                                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                                        8 clientes con declaraciones pendientes (vs. 15 en Q1 2025)
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">2. Base imponible</h6>
+                                    <p style="margin-bottom: 0.5rem;">La base imponible total ha aumentado un 8.3% respecto al mismo trimestre del año anterior, pasando de €41,800 a €45,280.</p>
+                                    <div style="background-color: #e3f2fd; padding: 0.5rem; border-radius: 4px; color: var(--accent-color); font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                                        Este aumento se debe principalmente a 3 clientes que han incrementado su facturación en más del 30%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    charts: [
+                        {
+                            title: 'Declaraciones por Tipo de Cliente',
+                            type: 'bar',
+                            data: [
+                                { label: 'Autónomos', value: 78, color: 'var(--secondary-color)' },
+                                { label: 'PYMES', value: 35, color: 'var(--accent-color)' },
+                                { label: 'Grandes Empresas', value: 15, color: '#9b59b6' }
+                            ]
+                        },
+                        {
+                            title: 'Base Imponible por Cliente (Top 10)',
+                            type: 'line',
+                            data: [
+                                { label: 'Ene', value: 12000 },
+                                { label: 'Feb', value: 13500 },
+                                { label: 'Mar', value: 14200 }
+                            ]
+                        },
+                        {
+                            title: 'Comparativa IVA Repercutido vs Soportado',
+                            type: 'pie',
+                            data: [
+                                { label: 'Repercutido', value: 9508.91, color: 'var(--success-color)' },
+                                { label: 'Soportado', value: 7244.88, color: 'var(--danger-color)' }
+                            ]
+                        }
+                    ],
+                    clients: [
+                        { name: 'Empresa XYZ, S.L.', nif: 'B12345678', taxBase: '€12,450.00', vatCharged: '€2,614.50', variation: '+32.4%', status: 'Al día' },
+                        { name: 'Construcciones SL', nif: 'B87654321', taxBase: '€9,850.00', vatCharged: '€2,068.50', variation: '+18.7%', status: 'Al día' },
+                        { name: 'Industrias 123, S.A.', nif: 'A12345678', taxBase: '€8,720.00', vatCharged: '€1,831.20', variation: '-4.2%', status: 'Pendiente' },
+                        { name: 'Lucas Torres', nif: '12345678A', taxBase: '€4,250.00', vatCharged: '€892.50', variation: '+15.3%', status: 'Al día' },
+                        { name: 'Comercio Rápido', nif: '12345678B', taxBase: '€3,850.00', vatCharged: '€808.50', variation: '+8.7%', status: 'Al día' }
+                    ],
+                    recommendations: [
+                        'Contactar con Industrias 123, S.A. para resolver la declaración pendiente antes del 20/04/2026',
+                        'Revisar la caída del 4.2% en la base imponible de Industrias 123, S.A.',
+                        'Programar reunión con Empresa XYZ, S.L. y Construcciones SL para analizar su crecimiento y oportunidades de optimización fiscal',
+                        'Enviar comunicación a todos los clientes recordando el próximo plazo de declaración (modelo 130 para Q2)',
+                        'Organizar taller formativo sobre deducciones fiscales para autónomos (mayo 2026)'
+                    ],
+                    attachments: [
+                        { name: 'INF-2026-Q1-ResumenFiscal.pdf', size: '1.2MB', type: 'PDF', description: 'Informe completo en formato PDF' },
+                        { name: 'INF-2026-Q1-DatosFiscales.xlsx', size: '450KB', type: 'Excel', description: 'Datos en bruto para análisis' },
+                        { name: 'INF-2026-Q1-Recomendaciones.txt', size: '12KB', type: 'Texto', description: 'Recomendaciones detalladas' }
+                    ]
+                },
+                'actividad-clientes-marzo': {
+                    title: 'Actividad de Clientes - Marzo 2026',
+                    id: '#INF-2026-0410',
+                    date: '10/04/2026',
+                    generatedBy: 'Carlos Martínez',
+                    status: 'Generado',
+                    category: ['Clientes', 'Actividad'],
+                    description: 'Resumen de interacciones y actividad de clientes durante el mes de marzo de 2026.',
+                    stats: {
+                        activeClients: 47,
+                        interactions: 189,
+                        documents: 124,
+                        tasks: 78
+                    },
+                    content: `
+                        <div class="report-section">
+                            <h4 class="section-title">Resumen de Actividad</h4>
+                            <div class="content-preview">
+                                <h5 style="color: var(--primary-color); margin-bottom: 1rem;">Principales métricas:</h5>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">1. Interacciones</h6>
+                                    <p style="margin-bottom: 0.5rem;">Se registraron 189 interacciones con clientes durante marzo, un 12% más que en febrero.</p>
+                                    <div style="background-color: #e3f2fd; padding: 0.5rem; border-radius: 4px; color: var(--accent-color); font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                                        63% de las interacciones fueron por canales digitales (email, chat)
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h6 style="color: var(--primary-color); margin-bottom: 0.5rem;">2. Documentación</h6>
+                                    <p style="margin-bottom: 0.5rem;">Se recibieron 124 documentos de clientes, principalmente relacionados con declaraciones trimestrales.</p>
+                                    <div style="background-color: #e8f5e8; padding: 0.5rem; border-radius: 4px; color: var(--success-color); font-size: 0.9rem;">
+                                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                                        92% de los documentos requeridos fueron entregados a tiempo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    charts: [
+                        {
+                            title: 'Interacciones por Canal',
+                            type: 'bar',
+                            data: [
+                                { label: 'Email', value: 87, color: 'var(--secondary-color)' },
+                                { label: 'Chat', value: 32, color: 'var(--accent-color)' },
+                                { label: 'Teléfono', value: 45, color: '#9b59b6' },
+                                { label: 'Presencial', value: 25, color: '#4caf50' }
+                            ]
+                        },
+                        {
+                            title: 'Documentos Recibidos por Semana',
+                            type: 'line',
+                            data: [
+                                { label: 'Semana 1', value: 28 },
+                                { label: 'Semana 2', value: 35 },
+                                { label: 'Semana 3', value: 42 },
+                                { label: 'Semana 4', value: 19 }
+                            ]
+                        }
+                    ],
+                    clients: [
+                        { name: 'Lucas Torres', interactions: 18, documents: 8, tasks: 5, lastActivity: '02/04/2026' },
+                        { name: 'Empresa XYZ, S.L.', interactions: 12, documents: 15, tasks: 8, lastActivity: '28/03/2026' },
+                        { name: 'Autónomo ABC', interactions: 9, documents: 5, tasks: 3, lastActivity: '25/03/2026' },
+                        { name: 'Industrias 123, S.A.', interactions: 7, documents: 12, tasks: 6, lastActivity: '20/03/2026' },
+                        { name: 'Comercio Rápido', interactions: 11, documents: 7, tasks: 4, lastActivity: '18/03/2026' }
+                    ],
+                    recommendations: [
+                        'Priorizar el seguimiento de los 5 clientes con documentos pendientes',
+                        'Programar llamadas de seguimiento a los clientes con menos interacciones',
+                        'Analizar las causas del pico de documentos en la semana 3',
+                        'Evaluar la satisfacción de los clientes con mayor número de interacciones'
+                    ],
+                    attachments: [
+                        { name: 'INF-2026-03-ActividadClientes.pdf', size: '980KB', type: 'PDF', description: 'Informe completo de actividad' },
+                        { name: 'INF-2026-03-Interacciones.xlsx', size: '320KB', type: 'Excel', description: 'Datos detallados de interacciones' }
+                    ]
+                }
+            };
+
+            const data = reportData[reportId] || reportData['resumen-fiscal-q1-2026'];
+
+            // Actualizar el título y metadatos
+            document.querySelector('.detail-title').textContent = data.title;
+            document.querySelector('.detail-meta div:first-child span:first-child').textContent = `ID: ${data.id}`;
+            document.querySelector('.detail-meta div:first-child span:nth-child(2)').textContent = `Fecha: ${data.date}`;
+            document.querySelector('.detail-meta div:first-child span:last-child').textContent = `Generado por: ${data.generatedBy}`;
+
+            // Actualizar tags
+            const tagsContainer = document.querySelector('.detail-tags');
+            tagsContainer.innerHTML = '';
+            data.category.forEach(category => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'detail-tag';
+
+                if (category === 'Fiscal') tagElement.classList.add('tag-fiscal');
+                else if (category === 'Laboral') tagElement.classList.add('tag-laboral');
+                else if (category === 'Contable') tagElement.classList.add('tag-contable');
+                else if (category === 'Clientes') tagElement.classList.add('tag-client');
+                else tagElement.classList.add('tag-client');
+
+                tagElement.textContent = category;
+                tagsContainer.appendChild(tagElement);
+            });
+
+            // Actualizar el contenido principal
+            const contentContainer = document.querySelector('.report-detail-content');
+            contentContainer.innerHTML = '';
+
+            // Sección de información del informe
+            const infoSection = document.createElement('div');
+            infoSection.className = 'report-section';
+            infoSection.innerHTML = `
+                <h4 class="section-title">Información del Informe</h4>
+                <div class="report-preview">
+                    <div class="preview-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <h4 style="color: var(--primary-color);">${data.title}</h4>
+                        <p style="color: #666;">${data.description}</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">${data.stats.clients || '42'}</div>
+                            <div style="font-size: 0.8rem; color: #666;">Clientes</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">${data.stats.declarations || data.stats.interactions || '128'}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${data.stats.declarations ? 'Declaraciones' : 'Interacciones'}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">${data.stats.taxBase || data.stats.documents || '€45,280'}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${data.stats.taxBase ? 'Base imponible' : 'Documentos'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            contentContainer.appendChild(infoSection);
+
+            // Sección de información detallada
+            const infoGroupSection = document.createElement('div');
+            infoGroupSection.className = 'report-info';
+            infoGroupSection.innerHTML = `
+                <div class="info-group">
+                    <div class="info-label">Información básica</div>
+                    <div class="info-value">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>ID de informe:</strong> ${data.id}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Tipo:</strong> ${data.title.includes('Fiscal') ? 'Resumen fiscal' : data.title.includes('Clientes') ? 'Actividad de clientes' : 'Informe general'}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Periodo:</strong> ${data.title.includes('Q1') ? 'Q1 2026' : data.title.includes('Marzo') ? 'Marzo 2026' : '2026'}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Fecha de generación:</strong> ${data.date} 10:45
+                        </div>
+                        <div>
+                            <strong>Generado por:</strong> ${data.generatedBy}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Parámetros</div>
+                    <div class="info-value">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Clientes incluidos:</strong> ${data.stats.clients || '42'}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>${data.stats.declarations ? 'Declaraciones procesadas' : 'Interacciones registradas'}:</strong> ${data.stats.declarations || data.stats.interactions || '128'}
+                        </div>
+                        ${data.stats.taxBase ? `
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Base imponible total:</strong> ${data.stats.taxBase}
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>IVA repercutido:</strong> ${data.stats.vatCharged || '€9,508.91'}
+                        </div>
+                        <div>
+                            <strong>IVA soportado:</strong> ${data.stats.vatPaid || '€7,244.88'}
+                        </div>
+                        ` : `
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Documentos recibidos:</strong> ${data.stats.documents || '124'}
+                        </div>
+                        <div>
+                            <strong>Tareas generadas:</strong> ${data.stats.tasks || '78'}
+                        </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            contentContainer.appendChild(infoGroupSection);
+
+            // Sección de descripción
+            const descriptionSection = document.createElement('div');
+            descriptionSection.className = 'report-description';
+            descriptionSection.innerHTML = `
+                <h4>Descripción</h4>
+                <div class="description-content">
+                    <p>${data.description}</p>
+                    ${data.title.includes('Fiscal') ? `
+                    <p>Este informe se genera automáticamente cada trimestre y se utiliza para:</p>
+                    <ul>
+                        <li>Evaluar el cumplimiento fiscal de los clientes</li>
+                        <li>Identificar oportunidades de optimización fiscal</li>
+                        <li>Planificar acciones para el próximo trimestre</li>
+                        <li>Detectar clientes que necesitan atención especial</li>
+                    </ul>
+                    ` : `
+                    <p>Este informe mensual permite:</p>
+                    <ul>
+                        <li>Monitorear la actividad y satisfacción de los clientes</li>
+                        <li>Identificar clientes que requieren atención prioritaria</li>
+                        <li>Optimizar la asignación de recursos del equipo</li>
+                        <li>Mejorar los procesos de comunicación con clientes</li>
+                    </ul>
+                    `}
+                </div>
+            `;
+            contentContainer.appendChild(descriptionSection);
+
+            // Contenido específico del informe
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = data.content;
+            contentContainer.appendChild(contentDiv);
+
+            // Sección de gráficos
+            const chartsSection = document.createElement('div');
+            chartsSection.className = 'report-charts';
+            chartsSection.innerHTML = `
+                <h4 class="section-title">Gráficos y Visualizaciones</h4>
+            `;
+
+            data.charts.forEach(chart => {
+                const chartDiv = document.createElement('div');
+                chartDiv.className = 'chart-container';
+                chartDiv.innerHTML = `
+                    <h5 class="chart-title">${chart.title}</h5>
+                    <div class="chart-placeholder">
+                        <div style="text-align: center; color: #ccc;">
+                            <i class="fas fa-chart-${chart.type}" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>Gráfico de ${chart.type === 'bar' ? 'barras' : chart.type === 'line' ? 'líneas' : 'tarta'}: ${chart.title}</p>
+                            ${chart.type === 'bar' ? `
+                            <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                ${chart.data.map(item => `<span style="color: ${item.color};">■</span> ${item.label}: ${item.value}`).join(' • ')}
+                            </p>
+                            ` : chart.type === 'line' ? `
+                            <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                Tendencia: ${chart.data[0].value} → ${chart.data[chart.data.length-1].value}
+                            </p>
+                            ` : `
+                            <p style="font-size: 0.8rem; margin-top: 1rem;">
+                                ${chart.data.map(item => `<span style="color: ${item.color};">■</span> ${item.label}: ${Math.round(item.value / (chart.data.reduce((a, b) => a + b.value, 0)) * 100)}%`).join(' • ')}
+                            </p>
+                            `}
+                        </div>
+                    </div>
+                `;
+                chartsSection.appendChild(chartDiv);
+            });
+            contentContainer.appendChild(chartsSection);
+
+            // Sección de clientes destacados
+            const clientsSection = document.createElement('div');
+            clientsSection.className = 'report-section';
+            clientsSection.innerHTML = `
+                <h4 class="section-title">${data.title.includes('Fiscal') ? 'Clientes Destacados' : 'Clientes más Activos'}</h4>
+                <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Cliente</th>
+                                ${data.title.includes('Fiscal') ? `
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Base Imponible</th>
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">IVA Repercutido</th>
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Variación vs 2025</th>
+                                ` : `
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Interacciones</th>
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Documentos</th>
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Tareas</th>
+                                `}
+                                <th style="text-align: left; padding: 0.5rem; font-size: 0.8rem; color: #666;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.clients.map(client => `
+                            <tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 0.5rem;">
+                                    <div style="font-weight: 500; color: var(--primary-color);">${client.name}</div>
+                                    <div style="font-size: 0.7rem; color: #666;">${client.nif}</div>
+                                </td>
+                                ${data.title.includes('Fiscal') ? `
+                                <td style="padding: 0.5rem;">${client.taxBase}</td>
+                                <td style="padding: 0.5rem;">${client.vatCharged}</td>
+                                <td style="padding: 0.5rem; color: ${client.variation.includes('-') ? 'var(--danger-color)' : 'var(--success-color)'};">${client.variation}</td>
+                                ` : `
+                                <td style="padding: 0.5rem;">${client.interactions}</td>
+                                <td style="padding: 0.5rem;">${client.documents}</td>
+                                <td style="padding: 0.5rem;">${client.tasks}</td>
+                                `}
+                                <td style="padding: 0.5rem;">
+                                    <span style="background-color: ${client.status === 'Al día' || client.status === 'Activo' ? 'var(--success-color)' : 'var(--warning-color)'}; color: white; padding: 0.2rem 0.4rem; border-radius: 10px; font-size: 0.7rem;">${client.status || client.lastActivity}</span>
+                                </td>
+                            </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            contentContainer.appendChild(clientsSection);
+
+            // Sección de recomendaciones
+            const recommendationsSection = document.createElement('div');
+            recommendationsSection.className = 'report-section';
+            recommendationsSection.innerHTML = `
+                <h4 class="section-title">Acciones Recomendadas</h4>
+                <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones inmediatas:</h5>
+                        <ol style="margin-left: 1.5rem;">
+                            ${data.recommendations.filter((_, i) => i < 3).map(rec => `<li>${rec}</li>`).join('')}
+                        </ol>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Acciones a medio plazo:</h5>
+                        <ul style="margin-left: 1.5rem;">
+                            ${data.recommendations.filter((_, i) => i >= 3 && i < 6).map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    ${data.recommendations.length > 6 ? `
+                    <div>
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Seguimiento:</h5>
+                        <ul style="margin-left: 1.5rem;">
+                            ${data.recommendations.filter((_, i) => i >= 6).map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            contentContainer.appendChild(recommendationsSection);
+
+            // Sección de anexos
+            const attachmentsSection = document.createElement('div');
+            attachmentsSection.className = 'report-section';
+            attachmentsSection.innerHTML = `
+                <h4 class="section-title">Anexos</h4>
+                <div style="background-color: #f9f9f9; padding: 1rem; border-radius: var(--border-radius);">
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Documentos adjuntos:</h5>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${data.attachments.map(attach => `
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background-color: white; border-radius: 4px; border: 1px solid #eee;">
+                                <div style="color: ${attach.type === 'PDF' ? 'var(--secondary-color)' : attach.type === 'Excel' ? 'var(--accent-color)' : '#9b59b6'}; font-size: 1.2rem;">
+                                    ${attach.type === 'PDF' ? '<i class="fas fa-file-pdf"></i>' :
+                                      attach.type === 'Excel' ? '<i class="fas fa-file-excel"></i>' : '<i class="fas fa-file-alt"></i>'}
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; color: var(--primary-color);">${attach.name}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${attach.description} • ${attach.size}</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Descargar" onclick="downloadAttachment('${attach.name}')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button style="background: none; border: none; color: var(--secondary-color); cursor: pointer;" title="Vista previa" onclick="previewAttachment('${attach.name}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Referencias:</h5>
+                        <ul style="margin-left: 1.5rem;">
+                            ${data.title.includes('Fiscal') ? `
+                            <li>Normativa aplicable: Ley 35/2006 (IRPF), Ley 37/1992 (IVA)</li>
+                            <li>Fuentes de datos: Sistema interno de gestoría, AEAT, Seguridad Social</li>
+                            <li>Metodología: Análisis comparativo con mismo periodo del año anterior</li>
+                            <li>Próxima actualización: 15/07/2026 (Q2 2026)</li>
+                            ` : `
+                            <li>Periodo analizado: Marzo 2026</li>
+                            <li>Fuentes de datos: Sistema de comunicación interno, registros de documentos</li>
+                            <li>Metodología: Análisis de interacciones y actividad registrada</li>
+                            <li>Próxima actualización: 05/05/2026 (Abril 2026)</li>
+                            `}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            contentContainer.appendChild(attachmentsSection);
+        }
+
+        // Función para abrir modal de nuevo informe
+        function openNewReportModal() {
+            document.getElementById('newReportModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de plantillas
+        function openTemplateModal() {
+            document.getElementById('templateModal').style.display = 'flex';
+        }
+
+        // Función para abrir modal de edición de informe
+        function openEditReportModal() {
+            document.getElementById('editReportModal').style.display = 'flex';
+        }
+
+        // Función para abrir selector de clientes
+        function openClientSelector() {
+            document.getElementById('clientSelectorModal').style.display = 'flex';
+        }
+
+        // Función para seleccionar plantilla
+        function selectTemplate(templateId) {
+            document.querySelectorAll('#templateModal .report-item').forEach(item => {
+                item.style.backgroundColor = '';
+            });
+            event.currentTarget.style.backgroundColor = '#f5f7fa';
+            selectedTemplate = templateId;
+        }
+
+        // Función para usar plantilla seleccionada
+        function useSelectedTemplate() {
+            if (!selectedTemplate) {
+                alert('Por favor, selecciona una plantilla');
+                return;
+            }
+
+            // Simular carga de plantilla
+            alert(`Plantilla "${selectedTemplate}" seleccionada. Configurando nuevo informe...`);
+            closeModal('templateModal');
+            openNewReportModal();
+        }
+
+        // Función para filtrar plantillas
+        function filterTemplates() {
+            const searchTerm = document.getElementById('templateSearch').value.toLowerCase();
+            const category = document.getElementById('templateCategory').value;
+
+            document.querySelectorAll('#templateModal .report-item').forEach(item => {
+                const title = item.querySelector('div.font-weight-500').textContent.toLowerCase();
+                const itemCategory = item.querySelector('div:last-child').textContent.toLowerCase();
+
+                let matches = true;
+
+                if (searchTerm && !title.includes(searchTerm)) {
+                    matches = false;
+                }
+
+                if (category && category !== '' && !itemCategory.includes(category.toLowerCase())) {
+                    matches = false;
+                }
+
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // Función para filtrar informes
+        function filterReports() {
+            const searchTerm = document.querySelector('.reports-sidebar .search-input').value.toLowerCase();
+            const typeFilter = document.querySelector('.reports-sidebar .filter-select').value;
+            const statusFilter = document.querySelectorAll('.reports-sidebar .filter-select')[1].value;
+            const periodFilter = document.querySelectorAll('.reports-sidebar .filter-select')[2].value;
+
+            document.querySelectorAll('.report-item').forEach(item => {
+                const title = item.querySelector('.report-title').textContent.toLowerCase();
+                const type = item.querySelector('.report-meta + div span:last-child').textContent.trim();
+                const status = item.querySelector('.report-status').textContent.trim();
+                const date = item.querySelector('.report-meta span:last-child').textContent.trim();
+
+                let matches = true;
+
+                if (searchTerm && !title.includes(searchTerm)) {
+                    matches = false;
+                }
+
+                if (typeFilter && typeFilter !== '' && !type.toLowerCase().includes(typeFilter)) {
+                    matches = false;
+                }
+
+                if (statusFilter && statusFilter !== '' && !status.toLowerCase().includes(statusFilter)) {
+                    matches = false;
+                }
+
+                if (periodFilter && periodFilter !== '') {
+                    const reportDate = new Date(date.split('/').reverse().join('-'));
+                    const now = new Date();
+                    let daysDiff = (now - reportDate) / (1000 * 60 * 60 * 24);
+
+                    if (periodFilter === 'week' && daysDiff > 7) matches = false;
+                    if (periodFilter === 'month' && daysDiff > 30) matches = false;
+                    if (periodFilter === 'quarter' && daysDiff > 90) matches = false;
+                    if (periodFilter === 'year' && daysDiff > 365) matches = false;
+                }
+
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        // Función para aplicar filtros
+        function applyFilters() {
+            filterReports();
+        }
+
+        // Función para crear informe
+        function createReport() {
+            const title = document.getElementById('newReportTitle').value.trim();
+            const type = document.getElementById('newReportType').value;
+            const period = document.getElementById('newReportPeriod').value;
+            const startDate = document.getElementById('newReportStartDate').value;
+            const endDate = document.getElementById('newReportEndDate').value;
+            const description = document.getElementById('newReportDescription').value.trim();
+
+            if (!title) {
+                alert('Por favor, introduce un título para el informe');
+                return;
+            }
+
+            if (!type) {
+                alert('Por favor, selecciona un tipo de informe');
+                return;
+            }
+
+            if (!period) {
+                alert('Por favor, selecciona un periodo');
+                return;
+            }
+
+            if (!startDate || !endDate) {
+                alert('Por favor, selecciona fechas válidas');
+                return;
+            }
+
+            if (!description) {
+                alert('Por favor, introduce una descripción para el informe');
+                return;
+            }
+
+            alert(`Informe "${title}" creado con éxito. Se generará en segundo plano.`);
+            closeModal('newReportModal');
+        }
+
+        // Función para guardar cambios en informe
+        function saveReportChanges() {
+            alert('Cambios guardados con éxito');
+            closeModal('editReportModal');
+        }
+
+        // Función para descargar informe en PDF
+        function downloadReportPDF() {
+            alert('Descargando informe en PDF...');
+        }
+
+        // Función para enviar informe por email
+        function sendReportEmail() {
+            alert('Preparando informe para envío por email...');
+        }
+
+        // Función para compartir informe
+        function shareReport() {
+            alert('Preparando opciones de compartir...');
+        }
+
+        // Función para imprimir informe
+        function printReport() {
+            alert('Preparando informe para impresión...');
+        }
+
+        // Función para generar informe similar
+        function generateSimilarReport() {
+            alert('Configurando nuevo informe basado en este...');
+        }
+
+        // Función para descargar adjunto
+        function downloadAttachment(filename) {
+            alert(`Descargando adjunto: ${filename}`);
+        }
+
+        // Función para ver vista previa de adjunto
+        function previewAttachment(filename) {
+            alert(`Mostrando vista previa de: ${filename}`);
+        }
+
+        // Función para seleccionar/deseleccionar cliente
+        function toggleClientSelection(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        }
+
+        // Función para seleccionar todos los clientes
+        function selectAllClients() {
+            document.querySelectorAll('#clientSelectorModal input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        // Función para deseccionar todos los clientes
+        function deselectAllClients() {
+            document.querySelectorAll('#clientSelectorModal input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // Función para confirmar selección de clientes
+        function confirmClientSelection() {
+            const selectedClients = [];
+            document.querySelectorAll('#clientSelectorModal input[type="checkbox"]:checked').forEach(checkbox => {
+                const clientElement = checkbox.closest('div');
+                const clientName = clientElement.querySelector('.font-weight-500').textContent;
+                const clientNif = clientElement.querySelector('.font-size-0-8rem').textContent.split('•')[0].trim();
+                selectedClients.push({ name: clientName, nif: clientNif });
+            });
+
+            const selectedClientsContainer = document.getElementById(currentReportContext === 'edit' ? 'editSelectedClients' : 'selectedClients');
+            selectedClientsContainer.innerHTML = '';
+
+            if (selectedClients.length === 0) {
+                selectedClientsContainer.innerHTML = '<div style="font-size: 0.9rem; color: #666;">Ningún cliente seleccionado</div>';
+            } else {
+                selectedClients.forEach(client => {
+                    const clientTag = document.createElement('div');
+                    clientTag.className = 'user-tag';
+                    clientTag.innerHTML = `
+                        <div class="user-avatar" style="width: 1.5rem; height: 1.5rem; font-size: 0.7rem; background-color: #e0e0e0;">
+                            ${client.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                        </div>
+                        ${client.name}
+                        <button style="background: none; border: none; color: #666; cursor: pointer; margin-left: 0.5rem;" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    selectedClientsContainer.appendChild(clientTag);
+                });
+            }
+
+            closeModal('clientSelectorModal');
+        }
+
+        // Función para filtrar clientes en el selector
+        function filterClientsInSelector() {
+            const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('clientTypeFilter').value;
+            const statusFilter = document.getElementById('clientStatusFilter').value;
+
+            document.querySelectorAll('#clientSelectorModal > div > div').forEach(item => {
+                if (item.style && item.style.display !== 'none') {
+                    const name = item.querySelector('.font-weight-500').textContent.toLowerCase();
+                    const type = item.querySelector('.font-size-0-8rem').textContent;
+                    const status = item.querySelector('div:last-child').textContent.trim();
+
+                    let matches = true;
+
+                    if (searchTerm && !name.includes(searchTerm)) {
+                        matches = false;
+                    }
+
+                    if (typeFilter && typeFilter !== '' && !type.includes(
+                        typeFilter === 'autonomo' ? 'Autónomo' :
+                        typeFilter === 'pyme' ? 'PYME' :
+                        typeFilter === 'empresa' ? 'Gran Empresa' : 'Particular'
+                    )) {
+                        matches = false;
+                    }
+
+                    if (statusFilter && statusFilter !== '' && !status.includes(
+                        statusFilter === 'active' ? 'Activo' : 'Inactivo'
+                    )) {
+                        matches = false;
+                    }
+
+                    item.style.display = matches ? 'flex' : 'none';
+                }
+            });
+        }
+
+        // Función para abrir modal
+        function openModal(modalId) {
+            currentReportContext = modalId === 'editReportModal' ? 'edit' : 'new';
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Función para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal-overlay[style="display: flex;"]');
+                openModals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+
+        // Configurar programación de generación
+        document.getElementById('scheduleGeneration').addEventListener('change', function() {
+            document.getElementById('scheduleGroup').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar informe por defecto
+            loadReport('resumen-fiscal-q1-2026');
+
+            // Configurar fecha mínima en nuevos informes
+            const today = new Date();
+            const minDate = new Date(today.getFullYear(), today.getMonth() - 3, 1).toISOString().split('T')[0];
+            document.getElementById('newReportStartDate').setAttribute('min', minDate);
+            document.getElementById('newReportEndDate').setAttribute('min', minDate);
+
+            // Configurar fecha por defecto en edición
+            const endDate = new Date();
+            const startDate = new Date(endDate);
+            startDate.setMonth(startDate.getMonth() - 3);
+            document.getElementById('editReportStartDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('editReportEndDate').value = endDate.toISOString().split('T')[0];
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>
